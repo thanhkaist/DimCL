@@ -3,7 +3,7 @@ python3 ../../../main_pretrain.py \
     --backbone resnet18 \
     --data_dir ~/workspace/trung_database/datasets/ \
     --max_epochs 200 \
-    --gpus 0 \
+    --gpus 1 \
     --accelerator gpu \
     --precision 16 \
     --num_workers 4 \
