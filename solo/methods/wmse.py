@@ -24,6 +24,9 @@ import torch.nn as nn
 from solo.losses.wmse import wmse_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.whitening import Whitening2d
+from solo.utils.misc import gather, get_rank
+import torch.nn.functional as F
+from solo.losses.oursloss import ours_loss_func
 
 
 class WMSE(BaseMethod):
@@ -77,6 +80,11 @@ class WMSE(BaseMethod):
         parser.add_argument("--whitening_size", type=int, default=256)
         parser.add_argument("--whitening_eps", type=float, default=0)
 
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
         return parent_parser
 
     @property

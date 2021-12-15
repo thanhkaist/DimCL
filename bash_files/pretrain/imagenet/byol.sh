@@ -4,7 +4,7 @@ python3 ../../../main_pretrain.py \
     --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet/train \
     --val_dir imagenet/val \
-    --max_epochs 200 \
+    --max_epochs 100 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \

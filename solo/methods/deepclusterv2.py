@@ -26,7 +26,8 @@ import torch.nn.functional as F
 from solo.losses.deepclusterv2 import deepclusterv2_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.kmeans import KMeans
-
+from solo.utils.misc import gather, get_rank
+from solo.losses.oursloss import ours_loss_func
 
 class DeepClusterV2(BaseMethod):
     def __init__(
@@ -86,6 +87,12 @@ class DeepClusterV2(BaseMethod):
         parser.add_argument("--temperature", type=float, default=0.1)
         parser.add_argument("--num_prototypes", type=int, nargs="+", default=[3000, 3000, 3000])
         parser.add_argument("--kmeans_iters", type=int, default=10)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
 
         return parent_parser
 

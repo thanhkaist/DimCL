@@ -26,6 +26,8 @@ import torch.nn.functional as F
 from solo.losses.swav import swav_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.sinkhorn_knopp import SinkhornKnopp
+from solo.utils.misc import gather, get_rank
+from solo.losses.oursloss import ours_loss_func
 
 
 class SwAV(BaseMethod):
@@ -98,6 +100,12 @@ class SwAV(BaseMethod):
         parser.add_argument("--sk_iters", type=int, default=3)
         parser.add_argument("--freeze_prototypes_epochs", type=int, default=1)
         parser.add_argument("--epoch_queue_starts", type=int, default=15)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
         return parent_parser
 
     @property
@@ -213,3 +221,4 @@ class SwAV(BaseMethod):
         if self.current_epoch < self.freeze_prototypes_epochs:
             for p in self.prototypes.parameters():
                 p.grad = None
+

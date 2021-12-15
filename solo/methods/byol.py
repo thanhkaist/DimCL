@@ -27,6 +27,8 @@ import numpy as np
 from solo.losses.byol import byol_loss_func
 from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
+from solo.utils.misc import gather, get_rank
+from solo.losses.oursloss import ours_loss_func
 
 
 class BYOL(BaseMomentumMethod):
@@ -35,6 +37,9 @@ class BYOL(BaseMomentumMethod):
         proj_output_dim: int,
         proj_hidden_dim: int,
         pred_hidden_dim: int,
+        lam: float,
+        tau_decor: float,
+        our_loss: str,
         **kwargs,
     ):
         """Implements BYOL (https://arxiv.org/abs/2006.07733).
@@ -46,6 +51,10 @@ class BYOL(BaseMomentumMethod):
         """
 
         super().__init__(**kwargs)
+
+        self.lam = lam
+        self.tau_decor = tau_decor
+        self.our_loss = our_loss
 
         # projector
         self.projector = nn.Sequential(
@@ -83,6 +92,12 @@ class BYOL(BaseMomentumMethod):
 
         # predictor
         parser.add_argument("--pred_hidden_dim", type=int, default=512)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+
 
         return parent_parser
 
@@ -127,7 +142,7 @@ class BYOL(BaseMomentumMethod):
         return {**out, "z": z, "p": p}
 
     def _shared_step(
-        self, feats: List[torch.Tensor], momentum_feats: List[torch.Tensor]
+        self, batch: Sequence[Any], feats: List[torch.Tensor], momentum_feats: List[torch.Tensor]
     ) -> torch.Tensor:
 
         Z = [self.projector(f) for f in feats]
@@ -139,13 +154,65 @@ class BYOL(BaseMomentumMethod):
 
         # ------- negative consine similarity loss -------
         neg_cos_sim = 0
-        for v1 in range(self.num_large_crops):
-            for v2 in np.delete(range(self.num_crops), v1):
-                neg_cos_sim += byol_loss_func(P[v2], Z_momentum[v1])
+        # for v1 in range(self.num_large_crops):
+        #     for v2 in np.delete(range(self.num_crops), v1):
+        #         neg_cos_sim += byol_loss_func(P[v2], Z_momentum[v1])
+
+        ### add our loss
+        byol_loss = byol_loss_func(P[1], Z_momentum[0]) + byol_loss_func(P[0], Z_momentum[1])
+        our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
+        if self.our_loss=='True':
+            neg_cos_sim = self.lam*our_loss + (1-self.lam)*byol_loss
+        elif self.our_loss=='False':
+            neg_cos_sim = byol_loss
+        else:
+            assert self.our_loss in ['True', 'False'], 'Input of our_loss is only True or False'
+        ###
 
         # calculate std of features
         with torch.no_grad():
             z_std = F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).std(dim=1).mean()
+        
+        ### new metrics
+        metrics = {
+            "Logits/avg_sum_logits_P": (torch.stack(P[: self.num_large_crops])).sum(-1).mean(),
+            "Logits/avg_sum_logits_P_normalized": F.normalize(torch.stack(P[: self.num_large_crops]), dim=-1).sum(-1).mean(),
+            "Logits/avg_sum_logits_Z": (torch.stack(Z[: self.num_large_crops])).sum(-1).mean(),
+            "Logits/avg_sum_logits_Z_normalized": F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).sum(-1).mean(),
+
+            "Logits/logits_P_max": (torch.stack(P[: self.num_large_crops])).max(),
+            "Logits/logits_P_min": (torch.stack(P[: self.num_large_crops])).min(),
+            "Logits/logits_Z_max": (torch.stack(Z[: self.num_large_crops])).max(),
+            "Logits/logits_Z_min": (torch.stack(Z[: self.num_large_crops])).min(),
+
+            "Logits/var_P": (torch.stack(P[: self.num_large_crops])).var(-1).mean(),
+            "Logits/var_Z": (torch.stack(Z[: self.num_large_crops])).var(-1).mean(),
+
+            "Logits/logits_P_normalized_max": F.normalize(torch.stack(P[: self.num_large_crops]), dim=-1).max(),
+            "Logits/logits_P_normalized_min": F.normalize(torch.stack(P[: self.num_large_crops]), dim=-1).min(),
+            "Logits/logits_Z_normalized_max": F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).max(),
+            "Logits/logits_Z_normalized_min": F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).min(),
+
+            "MeanVector/mean_vector_P_max": (torch.stack(P[: self.num_large_crops])).mean(1).max(),
+            "MeanVector/mean_vector_P_min": (torch.stack(P[: self.num_large_crops])).mean(1).min(),
+            "MeanVector/mean_vector_P_normalized_max": F.normalize(torch.stack(P[: self.num_large_crops]), dim=-1).mean(1).max(),
+            "MeanVector/mean_vector_P_normalized_min": F.normalize(torch.stack(P[: self.num_large_crops]), dim=-1).mean(1).min(),
+
+            "MeanVector/mean_vector_Z_max": (torch.stack(Z[: self.num_large_crops])).mean(1).max(),
+            "MeanVector/mean_vector_Z_min": (torch.stack(Z[: self.num_large_crops])).mean(1).min(),
+            "MeanVector/mean_vector_Z_normalized_max": F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).mean(1).max(),
+            "MeanVector/mean_vector_Z_normalized_min": F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).mean(1).min(),
+
+            "MeanVector/norm_vector_P": (torch.stack(P[: self.num_large_crops])).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_P_normalized": F.normalize(torch.stack(P[: self.num_large_crops]), dim=-1).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_Z": (torch.stack(Z[: self.num_large_crops])).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_Z_normalized": F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).mean(1).mean(0).norm(),
+
+            "Backbone/var": (torch.stack(feats[: self.num_large_crops])).var(-1).mean(),
+            "Backbone/max": (torch.stack(feats[: self.num_large_crops])).max(),
+        }
+        self.log_dict(metrics, on_epoch=True, sync_dist=True)
+        ### new metrics
 
         return neg_cos_sim, z_std
 
@@ -164,7 +231,7 @@ class BYOL(BaseMomentumMethod):
         out = super().training_step(batch, batch_idx)
         class_loss = out["loss"]
 
-        neg_cos_sim, z_std = self._shared_step(out["feats"], out["momentum_feats"])
+        neg_cos_sim, z_std = self._shared_step(batch, out["feats"], out["momentum_feats"])
 
         metrics = {
             "train_neg_cos_sim": neg_cos_sim,

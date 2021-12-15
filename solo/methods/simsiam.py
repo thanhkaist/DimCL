@@ -25,6 +25,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from solo.losses.simsiam import simsiam_loss_func
 from solo.methods.base import BaseMethod
+from solo.utils.misc import gather, get_rank
+from solo.losses.oursloss import ours_loss_func
 
 
 class SimSiam(BaseMethod):
@@ -33,6 +35,9 @@ class SimSiam(BaseMethod):
         proj_output_dim: int,
         proj_hidden_dim: int,
         pred_hidden_dim: int,
+        lam: float,
+        tau_decor: float,
+        our_loss: str,
         **kwargs,
     ):
         """Implements SimSiam (https://arxiv.org/abs/2011.10566).
@@ -44,6 +49,10 @@ class SimSiam(BaseMethod):
         """
 
         super().__init__(**kwargs)
+
+        self.lam = lam
+        self.tau_decor = tau_decor
+        self.our_loss = our_loss
 
         # projector
         self.projector = nn.Sequential(
@@ -77,6 +86,12 @@ class SimSiam(BaseMethod):
 
         # predictor
         parser.add_argument("--pred_hidden_dim", type=int, default=512)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
         return parent_parser
 
     @property
@@ -145,5 +160,46 @@ class SimSiam(BaseMethod):
             "train_z_std": z_std,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
+
+        ### new metrics
+        metrics = {
+            "Logits/avg_sum_logits_P": (torch.stack((p1,p2))).sum(-1).mean(),
+            "Logits/avg_sum_logits_P_normalized": F.normalize(torch.stack((p1,p2)), dim=-1).sum(-1).mean(),
+            "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
+            "Logits/avg_sum_logits_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).sum(-1).mean(),
+            
+            "Logits/logits_P_max": (torch.stack((p1,p2))).max(),
+            "Logits/logits_P_min": (torch.stack((p1,p2))).min(),
+            "Logits/logits_Z_max": (torch.stack((z1,z2))).max(),
+            "Logits/logits_Z_min": (torch.stack((z1,z2))).min(),
+
+            "Logits/logits_P_normalized_max": F.normalize(torch.stack((p1,p2)), dim=-1).max(),
+            "Logits/logits_P_normalized_min": F.normalize(torch.stack((p1,p2)), dim=-1).min(),
+            "Logits/logits_Z_normalized_max": F.normalize(torch.stack((z1,z2)), dim=-1).max(),
+            "Logits/logits_Z_normalized_min": F.normalize(torch.stack((z1,z2)), dim=-1).min(),
+
+            "MeanVector/mean_vector_P_max": (torch.stack((p1,p2))).mean(1).max(),
+            "MeanVector/mean_vector_P_min": (torch.stack((p1,p2))).mean(1).min(),
+            "MeanVector/mean_vector_P_normalized_max": F.normalize(torch.stack((p1,p2)), dim=-1).mean(1).max(),
+            "MeanVector/mean_vector_P_normalized_min": F.normalize(torch.stack((p1,p2)), dim=-1).mean(1).min(),
+
+            "MeanVector/mean_vector_Z_max": (torch.stack((z1,z2))).mean(1).max(),
+            "MeanVector/mean_vector_Z_min": (torch.stack((z1,z2))).mean(1).min(),
+            "MeanVector/mean_vector_Z_normalized_max": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).max(),
+            "MeanVector/mean_vector_Z_normalized_min": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).min(),
+
+            "MeanVector/norm_vector_P": (torch.stack((p1,p2))).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_P_normalized": F.normalize(torch.stack((p1,p2)), dim=-1).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_Z": (torch.stack((z1,z2))).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).mean(0).norm(),
+
+            "Logits/var_P": (torch.stack((p1,p2))).var(-1).mean(),
+            "Logits/var_Z": (torch.stack((z1,z2))).var(-1).mean(),
+
+            "Backbone/var": (torch.stack((feats1, feats2))).var(-1).mean(),
+            "Backbone/max": (torch.stack((feats1, feats2))).max(),
+        }
+        self.log_dict(metrics, on_epoch=True, sync_dist=True)
+        ### new metrics
 
         return neg_cos_sim + class_loss

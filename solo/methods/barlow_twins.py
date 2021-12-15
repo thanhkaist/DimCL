@@ -24,11 +24,21 @@ import torch
 import torch.nn as nn
 from solo.losses.barlow import barlow_loss_func
 from solo.methods.base import BaseMethod
+from solo.utils.misc import gather, get_rank
+import torch.nn.functional as F
+from solo.losses.oursloss import ours_loss_func
 
 
 class BarlowTwins(BaseMethod):
     def __init__(
-        self, proj_hidden_dim: int, proj_output_dim: int, lamb: float, scale_loss: float, **kwargs
+        self, 
+        proj_hidden_dim: int, 
+        proj_output_dim: int, 
+        lamb: float, scale_loss: float, 
+        lam: float,
+        tau_decor: float,
+        our_loss: str,
+        **kwargs
     ):
         """Implements Barlow Twins (https://arxiv.org/abs/2103.03230)
 
@@ -40,6 +50,10 @@ class BarlowTwins(BaseMethod):
         """
 
         super().__init__(**kwargs)
+
+        self.lam = lam
+        self.tau_decor = tau_decor
+        self.our_loss = our_loss
 
         self.lamb = lamb
         self.scale_loss = scale_loss
@@ -67,6 +81,12 @@ class BarlowTwins(BaseMethod):
         # parameters
         parser.add_argument("--lamb", type=float, default=0.0051)
         parser.add_argument("--scale_loss", type=float, default=0.024)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
         return parent_parser
 
     @property
@@ -118,5 +138,32 @@ class BarlowTwins(BaseMethod):
         barlow_loss = barlow_loss_func(z1, z2, lamb=self.lamb, scale_loss=self.scale_loss)
 
         self.log("train_barlow_loss", barlow_loss, on_epoch=True, sync_dist=True)
+
+        ### new metrics
+        metrics = {
+            "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
+            "Logits/avg_sum_logits_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).sum(-1).mean(),
+
+            "Logits/logits_Z_max": (torch.stack((z1,z2))).max(),
+            "Logits/logits_Z_min": (torch.stack((z1,z2))).min(),
+
+            "Logits/var_Z": (torch.stack((z1,z2))).var(-1).mean(),
+
+            "Logits/logits_Z_normalized_max": F.normalize(torch.stack((z1,z2)), dim=-1).max(),
+            "Logits/logits_Z_normalized_min": F.normalize(torch.stack((z1,z2)), dim=-1).min(),
+
+            "MeanVector/mean_vector_Z_max": (torch.stack((z1,z2))).mean(1).max(),
+            "MeanVector/mean_vector_Z_min": (torch.stack((z1,z2))).mean(1).min(),
+            "MeanVector/mean_vector_Z_normalized_max": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).max(),
+            "MeanVector/mean_vector_Z_normalized_min": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).min(),
+
+            "MeanVector/norm_vector_Z": (torch.stack((z1,z2))).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).mean(0).norm(),
+
+            "Backbone/var": (torch.stack((feats1,feats2))).var(-1).mean(),
+            "Backbone/max": (torch.stack((feats1,feats2))).max(),
+        }
+        self.log_dict(metrics, on_epoch=True, sync_dist=True)
+        ### new metrics
 
         return barlow_loss + class_loss

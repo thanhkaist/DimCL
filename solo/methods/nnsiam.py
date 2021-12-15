@@ -25,7 +25,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from solo.losses.simsiam import simsiam_loss_func
 from solo.methods.base import BaseMethod
-from solo.utils.misc import gather
+from solo.utils.misc import gather, get_rank
+from solo.losses.oursloss import ours_loss_func
 
 
 class NNSiam(BaseMethod):
@@ -91,6 +92,12 @@ class NNSiam(BaseMethod):
 
         # queue settings
         parser.add_argument("--queue_size", default=65536, type=int)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
 
         return parent_parser
 

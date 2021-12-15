@@ -30,6 +30,7 @@ from solo.losses.swav import swav_loss_func
 from solo.losses.vibcreg import vibcreg_loss_func
 from solo.losses.vicreg import vicreg_loss_func
 from solo.losses.wmse import wmse_loss_func
+from solo.losses.oursloss import ours_loss_func
 
 __all__ = [
     "barlow_loss_func",
@@ -45,4 +46,5 @@ __all__ = [
     "vibcreg_loss_func",
     "vicreg_loss_func",
     "wmse_loss_func",
+    "ours_loss_func",
 ]

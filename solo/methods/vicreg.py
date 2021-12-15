@@ -24,6 +24,9 @@ import torch
 import torch.nn as nn
 from solo.losses.vicreg import vicreg_loss_func
 from solo.methods.base import BaseMethod
+from solo.utils.misc import gather, get_rank
+import torch.nn.functional as F
+from solo.losses.oursloss import ours_loss_func
 
 
 class VICReg(BaseMethod):
@@ -34,6 +37,9 @@ class VICReg(BaseMethod):
         sim_loss_weight: float,
         var_loss_weight: float,
         cov_loss_weight: float,
+        lam: float,
+        tau_decor: float,
+        our_loss: str,
         **kwargs
     ):
         """Implements VICReg (https://arxiv.org/abs/2105.04906)
@@ -47,6 +53,10 @@ class VICReg(BaseMethod):
         """
 
         super().__init__(**kwargs)
+
+        self.lam = lam
+        self.tau_decor = tau_decor
+        self.our_loss = our_loss
 
         self.sim_loss_weight = sim_loss_weight
         self.var_loss_weight = var_loss_weight
@@ -76,6 +86,12 @@ class VICReg(BaseMethod):
         parser.add_argument("--sim_loss_weight", default=25, type=float)
         parser.add_argument("--var_loss_weight", default=25, type=float)
         parser.add_argument("--cov_loss_weight", default=1.0, type=float)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
         return parent_parser
 
     @property
@@ -132,5 +148,32 @@ class VICReg(BaseMethod):
         )
 
         self.log("train_vicreg_loss", vicreg_loss, on_epoch=True, sync_dist=True)
+
+        ### new metrics
+        metrics = {
+            "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
+            "Logits/avg_sum_logits_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).sum(-1).mean(),
+
+            "Logits/logits_Z_max": (torch.stack((z1,z2))).max(),
+            "Logits/logits_Z_min": (torch.stack((z1,z2))).min(),
+
+            "Logits/var_Z": (torch.stack((z1,z2))).var(-1).mean(),
+
+            "Logits/logits_Z_normalized_max": F.normalize(torch.stack((z1,z2)), dim=-1).max(),
+            "Logits/logits_Z_normalized_min": F.normalize(torch.stack((z1,z2)), dim=-1).min(),
+
+            "MeanVector/mean_vector_Z_max": (torch.stack((z1,z2))).mean(1).max(),
+            "MeanVector/mean_vector_Z_min": (torch.stack((z1,z2))).mean(1).min(),
+            "MeanVector/mean_vector_Z_normalized_max": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).max(),
+            "MeanVector/mean_vector_Z_normalized_min": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).min(),
+
+            "MeanVector/norm_vector_Z": (torch.stack((z1,z2))).mean(1).mean(0).norm(),
+            "MeanVector/norm_vector_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).mean(1).mean(0).norm(),
+
+            "Backbone/var": (torch.stack((feats1,feats2))).var(-1).mean(),
+            "Backbone/max": (torch.stack((feats1,feats2))).max(),
+        }
+        self.log_dict(metrics, on_epoch=True, sync_dist=True)
+        ### new metrics
 
         return vicreg_loss + class_loss

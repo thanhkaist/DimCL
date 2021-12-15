@@ -25,6 +25,9 @@ import torch.nn as nn
 from solo.losses.vibcreg import vibcreg_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.whitening import IterNorm
+from solo.utils.misc import gather, get_rank
+import torch.nn.functional as F
+from solo.losses.oursloss import ours_loss_func
 
 
 class VIbCReg(BaseMethod):
@@ -81,6 +84,12 @@ class VIbCReg(BaseMethod):
         parser.add_argument("--var_loss_weight", default=25.0, type=float)
         parser.add_argument("--cov_loss_weight", default=200.0, type=float)
         parser.add_argument("--iternorm", action="store_true")
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
         return parent_parser
 
     @property

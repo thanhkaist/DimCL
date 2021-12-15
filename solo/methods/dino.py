@@ -28,6 +28,8 @@ from solo.losses.dino import DINOLoss
 from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 from solo.utils.misc import trunc_normal_
+from solo.utils.misc import gather, get_rank
+from solo.losses.oursloss import ours_loss_func
 
 
 class DINOHead(nn.Module):
@@ -202,6 +204,12 @@ class DINO(BaseMomentumMethod):
         parser.add_argument("--teacher_temperature", default=0.07, type=float)
         parser.add_argument("--warmup_teacher_temperature", default=0.04, type=float)
         parser.add_argument("--warmup_teacher_temperature_epochs", default=50, type=int)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
 
         return parent_parser
 

@@ -26,7 +26,8 @@ import torch.nn.functional as F
 from solo.losses.ressl import ressl_loss_func
 from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
-from solo.utils.misc import gather
+from solo.utils.misc import gather, get_rank
+from solo.losses.oursloss import ours_loss_func
 
 
 class ReSSL(BaseMomentumMethod):
@@ -90,6 +91,11 @@ class ReSSL(BaseMomentumMethod):
         # parameters
         parser.add_argument("--temperature_q", type=float, default=0.1)
         parser.add_argument("--temperature_k", type=float, default=0.04)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
 
         return parent_parser
 

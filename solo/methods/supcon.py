@@ -24,6 +24,9 @@ import torch
 import torch.nn as nn
 from solo.losses.simclr import simclr_loss_func
 from solo.methods.base import BaseMethod
+from solo.utils.misc import gather, get_rank
+import torch.nn.functional as F
+from solo.losses.oursloss import ours_loss_func
 
 
 class SupCon(BaseMethod):
@@ -58,6 +61,12 @@ class SupCon(BaseMethod):
 
         # parameters
         parser.add_argument("--temperature", type=float, default=0.1)
+
+        # our loss
+        parser.add_argument("--lam", type=float, default=0.1)
+        parser.add_argument("--tau_decor", type=float, default=0.1)
+        parser.add_argument("--our_loss", type=str, default='True')
+        
 
         return parent_parser
 
