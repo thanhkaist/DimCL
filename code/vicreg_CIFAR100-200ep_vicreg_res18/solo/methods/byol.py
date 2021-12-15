@@ -161,8 +161,8 @@ class BYOL(BaseMomentumMethod):
 
         ### add our loss
         original_loss = byol_loss
-        our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
         if self.our_loss=='True':
+            our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
             total_loss = self.lam*our_loss + (1-self.lam)*original_loss
         elif self.our_loss=='False':
             total_loss = original_loss

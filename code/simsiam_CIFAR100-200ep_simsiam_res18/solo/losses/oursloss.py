@@ -20,7 +20,7 @@
 import torch
 import torch.nn.functional as F
 from solo.utils.misc import gather, get_rank
-
+import ipdb
 
 ### Our Loss defined here
 def ours_loss_func(z1: torch.Tensor, z2: torch.Tensor, indexes: torch.Tensor, tau_decor: float = 0.1) -> torch.Tensor:
@@ -44,6 +44,8 @@ def ours_loss_func(z1: torch.Tensor, z2: torch.Tensor, indexes: torch.Tensor, ta
 
     z = F.normalize(z, dim=-1)
     gathered_z = gather(z)
+
+    ipdb.set_trace()
 
     sim = torch.exp(torch.einsum("if, jf -> ij", z, gathered_z) / tau_decor)
 

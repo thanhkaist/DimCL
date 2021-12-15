@@ -27,7 +27,7 @@ from solo.methods.base import BaseMethod
 from solo.utils.misc import gather, get_rank
 import torch.nn.functional as F
 from solo.losses.oursloss import ours_loss_func
-
+import ipdb
 
 class SimCLR(BaseMethod):
     def __init__(
@@ -127,7 +127,10 @@ class SimCLR(BaseMethod):
 
         feats = out["feats"]
 
-        z = torch.cat([self.projector(f) for f in feats])
+        # z = torch.cat([self.projector(f) for f in feats])
+        Z = [self.projector(f) for f in feats]
+
+        z = torch.cat((Z))
 
         # ------- contrastive loss -------
         n_augs = self.num_large_crops + self.num_small_crops
@@ -139,10 +142,12 @@ class SimCLR(BaseMethod):
             temperature=self.temperature,
         )
 
+        ipdb.set_trace()
+
         ### add our loss
         original_loss = nce_loss
-        our_loss = ours_loss_func(z[0], z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
         if self.our_loss=='True':
+            our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
             total_loss = self.lam*our_loss + (1-self.lam)*original_loss
         elif self.our_loss=='False':
             total_loss = original_loss
@@ -153,7 +158,7 @@ class SimCLR(BaseMethod):
         self.log("train_nce_loss", total_loss, on_epoch=True, sync_dist=True)
 
         ### new metrics
-        z1, z2 = z[0], z[1]
+        z1, z2 = Z[0], Z[1]
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
             "Logits/avg_sum_logits_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).sum(-1).mean(),
