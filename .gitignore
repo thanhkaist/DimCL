@@ -5,6 +5,8 @@ runs/
 wandb/
 wandb*/
 
+code/
+
 # umap dir
 auto_umap/
 
