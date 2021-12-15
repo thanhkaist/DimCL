@@ -1,8 +1,8 @@
 python3 ../../../main_pretrain.py \
-    --dataset $1 \
+    --dataset cifar100 \
     --backbone resnet18 \
-    --data_dir ./datasets \
-    --max_epochs 1000 \
+    --data_dir ~/workspace/trung_database/datasets/ \
+    --max_epochs 200 \
     --gpus 0 \
     --accelerator gpu \
     --precision 16 \
@@ -25,9 +25,9 @@ python3 ../../../main_pretrain.py \
     --solarization_prob 0.0 0.2 \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
-    --name nnclr-$1 \
-    --project solo-learn \
-    --entity unitn-mhug \
+    --name nnclr_res18 \
+    --project CIFAR100-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method nnclr \
@@ -35,4 +35,8 @@ python3 ../../../main_pretrain.py \
     --proj_hidden_dim 2048 \
     --pred_hidden_dim 4096 \
     --proj_output_dim 256 \
-    --queue_size 65536
+    --queue_size 65536 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

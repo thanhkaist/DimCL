@@ -1,12 +1,12 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone resnet18 \
-    --data_dir /datasets \
+    --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/test \
-    --max_epochs 400 \
+    --max_epochs 200 \
     --precision 16 \
-    --gpus 0,1 \
+    --gpus 4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --num_workers 4 \
@@ -25,12 +25,15 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 0.2 \
     --min_scale 0.08 \
     --num_crops_per_aug 2 \
-    --dali \
     --wandb \
     --save_checkpoint \
-    --name wmse-imagenet100 \
-    --project solo-learn \
-    --entity unitn-mhug \
+    --name wmse_res18 \
+    --project Imagenet100-200ep \
+    --entity kaistaim \
     --method wmse \
     --proj_output_dim 64 \
-    --whitening_size 128
+    --whitening_size 128 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

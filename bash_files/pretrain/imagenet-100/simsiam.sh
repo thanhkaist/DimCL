@@ -1,11 +1,11 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone resnet18 \
-    --data_dir /datasets \
+    --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
-    --max_epochs 400 \
-    --gpus 0,1 \
+    --max_epochs 200 \
+    --gpus 4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -15,7 +15,7 @@ python3 ../../../main_pretrain.py \
     --lr 0.5 \
     --classifier_lr 0.1 \
     --weight_decay 1e-5 \
-    --batch_size 128 \
+    --batch_size 256 \
     --num_workers 4 \
     --brightness 0.4 \
     --contrast 0.4 \
@@ -23,13 +23,16 @@ python3 ../../../main_pretrain.py \
     --hue 0.1 \
     --num_crops_per_aug 2 \
     --zero_init_residual \
-    --name simsiam-400ep-imagenet100 \
-    --dali \
-    --entity unitn-mhug \
-    --project solo-learn \
+    --name simsiam_res18 \
+    --project Imagenet100-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method simsiam \
     --proj_hidden_dim 2048 \
     --pred_hidden_dim 512 \
-    --proj_output_dim 2048
+    --proj_output_dim 2048 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

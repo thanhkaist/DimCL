@@ -1,11 +1,11 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone vit_tiny \
-    --data_dir /datasets \
+    --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/test \
-    --max_epochs 400 \
-    --gpus 0,1 \
+    --max_epochs 200 \
+    --gpus 4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -25,9 +25,9 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 1.0 0.1 \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
-    --name vit_tiny-dino-400ep-imagenet100 \
-    --project solo-learn \
-    --entity unitn-mhug \
+    --name vit_tiny-dino-200ep \
+    --entity kaistaim \
+    --project Imagenet100-200ep \
     --wandb \
     --save_checkpoint \
     --method dino \
@@ -36,4 +36,8 @@ python3 ../../../main_pretrain.py \
     --num_prototypes 65536 \
     --norm_last_layer false \
     --base_tau_momentum 0.9995 \
-    --final_tau_momentum 1.0
+    --final_tau_momentum 1.0 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

@@ -1,5 +1,5 @@
 python3 ../../../main_pretrain.py \
-    --dataset cifar100 \
+    --dataset stl10 \
     --backbone resnet18 \
     --data_dir ~/workspace/trung_database/datasets/ \
     --max_epochs 200 \
@@ -18,10 +18,10 @@ python3 ../../../main_pretrain.py \
     --saturation 0.4 \
     --hue 0.1 \
     --gaussian_prob 0.0 0.0 \
-    --crop_size 32 \
+    --crop_size 96 \
     --num_crops_per_aug 1 1 \
     --name mocov2plus_res18 \
-    --project CIFAR100-200ep \
+    --project STL10-200ep \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \

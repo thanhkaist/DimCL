@@ -1,5 +1,5 @@
 python3 ../../../main_pretrain.py \
-    --dataset cifar100 \
+    --dataset stl10 \
     --backbone resnet18 \
     --data_dir ~/workspace/trung_database/datasets/ \
     --max_epochs 200 \
@@ -8,30 +8,28 @@ python3 ../../../main_pretrain.py \
     --precision 16 \
     --optimizer sgd \
     --scheduler warmup_cosine \
-    --lr 0.3 \
-    --classifier_lr 0.3 \
-    --weight_decay 1e-4 \
+    --lr 0.5 \
+    --classifier_lr 0.1 \
+    --weight_decay 1e-5 \
     --batch_size 256 \
     --num_workers 4 \
+    --crop_size 96 \
     --brightness 0.4 \
     --contrast 0.4 \
     --saturation 0.4 \
     --hue 0.1 \
     --gaussian_prob 0.0 0.0 \
-    --crop_size 32 \
     --num_crops_per_aug 1 1 \
-    --name mocov2plus_res18 \
-    --project CIFAR100-200ep \
+    --zero_init_residual \
+    --name simsiam_res18 \
+    --project STL10-200ep \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \
-    --method mocov2plus \
+    --method simsiam \
     --proj_hidden_dim 2048 \
-    --queue_size 32768 \
-    --temperature 0.2 \
-    --base_tau_momentum 0.99 \
-    --final_tau_momentum 0.999 \
-    --momentum_classifier \
+    --pred_hidden_dim 512 \
+    --proj_output_dim 2048 \
     --knn_eval \
     --lam 0.1 \
     --tau_decor 0.1 \

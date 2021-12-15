@@ -1,8 +1,8 @@
 python3 ../../../main_pretrain.py \
-    --dataset $1 \
+    --dataset cifar100 \
     --backbone resnet18 \
-    --data_dir ./datasets \
-    --max_epochs 1000 \
+    --data_dir ~/workspace/trung_database/datasets/ \
+    --max_epochs 200 \
     --gpus 0 \
     --accelerator gpu \
     --precision 16 \
@@ -21,12 +21,16 @@ python3 ../../../main_pretrain.py \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
     --zero_init_residual \
-    --name nnsiam-$1 \
-    --project solo-learn \
-    --entity unitn-mhug \
+    --name nnsiam_res18 \
+    --project CIFAR100-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method nnsiam \
+    --proj_output_dim 2048 \
     --proj_hidden_dim 2048 \
     --pred_hidden_dim 4096 \
-    --proj_output_dim 2048
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

@@ -53,6 +53,8 @@ from solo.utils.pretrain_dataloader import (
     prepare_n_crop_transform,
     prepare_transform,
 )
+import shutil
+import ipdb
 
 
 def main():
@@ -177,6 +179,24 @@ def main():
         callbacks=callbacks,
         enable_checkpointing=False,
     )
+
+    if args.wandb:
+        os.makedirs(f"../../../code/", exist_ok=True)
+        experimentdir = f"../../../code/{args.method}_{args.project}_{args.name}"
+        if os.path.exists(experimentdir):
+            print(experimentdir + ': exists. overwrite it.')
+            shutil.rmtree(experimentdir)
+        os.mkdir(experimentdir)
+
+        shutil.copytree(f"../../../solo", os.path.join(experimentdir, 'solo'))
+        shutil.copytree(f"../../../tests", os.path.join(experimentdir, 'tests'))
+        shutil.copyfile(f"../../../main_pretrain.py", os.path.join(experimentdir, 'main_pretrain.py'))
+        shutil.copyfile(f"../../../main_linear.py", os.path.join(experimentdir, 'main_linear.py'))
+        import glob
+        files = glob.glob('../../../bash_files/**/*.sh', recursive=True)
+        [os.makedirs(os.path.join(experimentdir, os.path.dirname(file)[9:]), exist_ok=True) for file in files]
+        [shutil.copyfile(file, os.path.join(experimentdir, file[9:])) for file in files]
+
 
     if args.dali:
         trainer.fit(model, val_dataloaders=val_loader, ckpt_path=ckpt_path)

@@ -1,8 +1,8 @@
 python3 ../../../main_pretrain.py \
-    --dataset $1 \
+    --dataset cifar100 \
     --backbone resnet18 \
-    --data_dir ./datasets \
-    --max_epochs 1000 \
+    --data_dir ~/workspace/trung_database/datasets/ \
+    --max_epochs 200 \
     --gpus 0 \
     --accelerator gpu \
     --precision 16 \
@@ -26,12 +26,16 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 0.0 0.0 \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
-    --name deepclusterv2-$1 \
-    --project solo-learn \
-    --entity unitn-mhug \
+    --name deepclusterv2_res18 \
+    --project CIFAR100-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method deepclusterv2 \
     --proj_hidden_dim 2048 \
     --proj_output_dim 128 \
-    --num_prototypes 3000 3000 3000
+    --num_prototypes 3000 3000 3000 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

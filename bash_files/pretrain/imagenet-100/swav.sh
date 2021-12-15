@@ -1,11 +1,11 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone resnet18 \
-    --data_dir /datasets \
+    --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
-    --max_epochs 400 \
-    --gpus 0,1 \
+    --max_epochs 200 \
+    --gpus 4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -20,17 +20,16 @@ python3 ../../../main_pretrain.py \
     --min_lr 0.0006 \
     --classifier_lr 0.1 \
     --weight_decay 1e-6 \
-    --batch_size 128 \
+    --batch_size 256 \
     --num_workers 4 \
-    --dali \
     --brightness 0.8 \
     --contrast 0.8 \
     --saturation 0.8 \
     --hue 0.2 \
     --num_crops_per_aug 2 \
-    --name swav-400ep-imagenet100 \
+    --name swav_res18 \
+    --project kaistaim \
     --entity unitn-mhug \
-    --project solo-learn \
     --wandb \
     --save_checkpoint \
     --method swav \
@@ -39,4 +38,8 @@ python3 ../../../main_pretrain.py \
     --proj_output_dim 128 \
     --num_prototypes 3000 \
     --epoch_queue_starts 50 \
-    --freeze_prototypes_epochs 2
+    --freeze_prototypes_epochs 2 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

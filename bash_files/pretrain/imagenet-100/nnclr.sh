@@ -1,10 +1,10 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone resnet18 \
-    --data_dir /datasets \
+    --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
-    --max_epochs 400 \
+    --max_epochs 200 \
     --gpus 0,1 \
     --accelerator gpu \
     --strategy ddp \
@@ -18,7 +18,7 @@ python3 ../../../main_pretrain.py \
     --scheduler warmup_cosine \
     --lr 0.4 \
     --weight_decay 1e-5 \
-    --batch_size 128 \
+    --batch_size 256 \
     --brightness 0.4 \
     --contrast 0.4 \
     --saturation 0.2 \
@@ -27,10 +27,9 @@ python3 ../../../main_pretrain.py \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
     --num_workers 4 \
-    --dali \
-    --name nnclr-400ep-imagenet100 \
-    --entity unitn-mhug \
-    --project solo-learn \
+    --name nnclr_res18 \
+    --project Imagenet100-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method nnclr \
@@ -38,4 +37,8 @@ python3 ../../../main_pretrain.py \
     --proj_hidden_dim 2048 \
     --pred_hidden_dim 4096 \
     --proj_output_dim 256 \
-    --queue_size 65536
+    --queue_size 65536 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

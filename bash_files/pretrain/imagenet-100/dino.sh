@@ -1,11 +1,11 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone resnet18 \
-    --data_dir /datasets \
+    --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
-    --max_epochs 400 \
-    --gpus 0,1 \
+    --max_epochs 200 \
+    --gpus 4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -19,9 +19,8 @@ python3 ../../../main_pretrain.py \
     --lr 0.3 \
     --classifier_lr 0.1 \
     --weight_decay 1e-6 \
-    --batch_size 128 \
+    --batch_size 256 \
     --num_workers 4 \
-    --dali \
     --brightness 0.4 \
     --contrast 0.4 \
     --saturation 0.2 \
@@ -29,9 +28,9 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 1.0 0.1 \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
-    --name dino-400ep-imagenet100 \
-    --entity unitn-mhug \
-    --project solo-learn \
+    --name dino_res18 \
+    --project Imagenet100-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method dino \
@@ -39,4 +38,8 @@ python3 ../../../main_pretrain.py \
     --proj_hidden_dim 2048 \
     --num_prototypes 4096 \
     --base_tau_momentum 0.9995 \
-    --final_tau_momentum 1.0
+    --final_tau_momentum 1.0 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

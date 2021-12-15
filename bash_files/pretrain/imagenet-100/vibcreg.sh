@@ -1,11 +1,11 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone resnet18 \
-    --data_dir /datasets \
+    --data_dir ~/workspace/trung_database/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
-    --max_epochs 400 \
-    --gpus 0,1 \
+    --max_epochs 200 \
+    --gpus 4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -18,9 +18,8 @@ python3 ../../../main_pretrain.py \
     --scheduler warmup_cosine \
     --lr 0.3 \
     --weight_decay 1e-4 \
-    --batch_size 128 \
+    --batch_size 256 \
     --num_workers 4 \
-    --dali \
     --min_scale 0.2 \
     --brightness 0.4 \
     --contrast 0.4 \
@@ -28,9 +27,9 @@ python3 ../../../main_pretrain.py \
     --hue 0.1 \
     --solarization_prob 0.1 \
     --num_crops_per_aug 2 \
-    --name vibcreg-400ep-imagenet100 \
-    --entity unitn-mhug \
-    --project solo-learn \
+    --name vibcreg_res18 \
+    --entity kaistaim \
+    --project Imagenet100-200ep \
     --wandb \
     --save_checkpoint \
     --method vibcreg \
@@ -39,4 +38,8 @@ python3 ../../../main_pretrain.py \
     --sim_loss_weight 25.0 \
     --var_loss_weight 25.0 \
     --cov_loss_weight 200.0 \
-    --iternorm
+    --iternorm \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

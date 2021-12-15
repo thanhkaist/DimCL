@@ -1,8 +1,8 @@
 python3 ../../../main_pretrain.py \
-    --dataset $1 \
+    --dataset cifar100 \
     --backbone resnet18 \
-    --data_dir ./datasets \
-    --max_epochs 1000 \
+    --data_dir ~/workspace/trung_database/datasets/ \
+    --max_epochs 200 \
     --gpus 0 \
     --accelerator gpu \
     --precision 16 \
@@ -16,7 +16,6 @@ python3 ../../../main_pretrain.py \
     --weight_decay 1e-4 \
     --batch_size 256 \
     --num_workers 4 \
-    --crop_size 32 \
     --min_scale 0.2 \
     --brightness 0.4 \
     --contrast 0.4 \
@@ -26,9 +25,9 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 0.0 0.0 \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
-    --name vicreg-$1 \
-    --project solo-learn \
-    --entity unitn-mhug \
+    --name vicreg_res18 \
+    --project CIFAR100-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method vicreg \
@@ -36,4 +35,8 @@ python3 ../../../main_pretrain.py \
     --proj_output_dim 2048 \
     --sim_loss_weight 25.0 \
     --var_loss_weight 25.0 \
-    --cov_loss_weight 1.0
+    --cov_loss_weight 1.0 \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \

@@ -1,11 +1,11 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet \
     --backbone resnet50 \
-    --data_dir /datasets \
-    --train_dir ILSVRC2012/train \
-    --val_dir ILSVRC2012/val \
-    --max_epochs 100 \
-    --gpus 0,1 \
+    --data_dir ~/workspace/trung_database/datasets/ \
+    --train_dir imagenet/train \
+    --val_dir imagenet/val \
+    --max_epochs 200 \
+    --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -19,9 +19,8 @@ python3 ../../../main_pretrain.py \
     --accumulate_grad_batches 16 \
     --classifier_lr 0.2 \
     --weight_decay 1e-6 \
-    --batch_size 128 \
+    --batch_size 256 \
     --num_workers 4 \
-    --dali \
     --brightness 0.4 \
     --contrast 0.4 \
     --saturation 0.2 \
@@ -29,9 +28,9 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 1.0 0.1 \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
-    --name byol-resnet50-imagenet-100epochs \
-    --entity unitn-mhug \
-    --project solo-learn \
+    --name byol_res50 \
+    --project Imagenet1K-200ep \
+    --entity kaistaim \
     --wandb \
     --save_checkpoint \
     --method byol \
@@ -40,4 +39,8 @@ python3 ../../../main_pretrain.py \
     --pred_hidden_dim 4096 \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
-    --momentum_classifier
+    --momentum_classifier \
+    --knn_eval \
+    --lam 0.1 \
+    --tau_decor 0.1 \
+    --our_loss False \
