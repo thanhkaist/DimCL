@@ -24,35 +24,31 @@ from typing import Optional
 import ipdb
 
 ### our loss function for single gpu
-def ours_loss_func( z1: torch.Tensor, z2: torch.Tensor, indexes: torch.Tensor, tau_decor: float = 0.1, extra_pos_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+def ours_loss_func(
+    z1: torch.Tensor, 
+    z2: torch.Tensor, 
+    indexes: torch.Tensor, 
+    tau_decor: float = 0.1, 
+    extra_pos_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
     
-
-    """Computes SimCLR's loss given batch of projected features z1 from view 1 and
+    """Computes ours's loss given batch of projected features z1 from view 1 and
     projected features z2 from view 2.
-
     Args:
         z1 (torch.Tensor): NxD Tensor containing projected features from view 1.
         z2 (torch.Tensor): NxD Tensor containing projected features from view 2.
         temperature (float): temperature factor for the loss. Defaults to 0.1.
         extra_pos_mask (Optional[torch.Tensor]): boolean mask containing extra positives other
             than normal across-view positives. Defaults to None.
-
     Returns:
-        torch.Tensor: SimCLR loss.
+        torch.Tensor: ours loss.
     """
 
     device = z1.device
+    _, D = z1.size()
+    bn = torch.nn.BatchNorm1d(D, affine=False).to(device)
 
-    # z1 = F.normalize(z1, dim=-1)
-    # z2 = F.normalize(z2, dim=-1)
-
-    N, D = z1.size()
-
-    # to match the original code
-    bn = torch.nn.BatchNorm1d(D, affine=False).to(z1.device)
     z1 = bn(z1).T
     z2 = bn(z2).T
-
 
     b = z1.size(0)
     z = torch.cat((z1, z2), dim=0)
@@ -85,7 +81,11 @@ def ours_loss_func( z1: torch.Tensor, z2: torch.Tensor, indexes: torch.Tensor, t
     return loss
 
 ### our loss function for multiple gpu
-def ours_loss_func_multigpu(z1: torch.Tensor, z2: torch.Tensor, indexes: torch.Tensor, tau_decor: float = 0.1) -> torch.Tensor:
+def ours_loss_func_multigpu(
+    z1: torch.Tensor, 
+    z2: torch.Tensor, 
+    indexes: torch.Tensor, 
+    tau_decor: float = 0.1) -> torch.Tensor:
     """Computes Ours's loss given batch of projected features z
     from different views, a positive boolean mask of all positives and
     a negative boolean mask of all negatives.
