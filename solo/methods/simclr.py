@@ -139,7 +139,18 @@ class SimCLR(BaseMethod):
             temperature=self.temperature,
         )
 
-        self.log("train_nce_loss", nce_loss, on_epoch=True, sync_dist=True)
+        ### add our loss
+        original_loss = nce_loss
+        our_loss = ours_loss_func(z[0], z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
+        if self.our_loss=='True':
+            total_loss = self.lam*our_loss + (1-self.lam)*original_loss
+        elif self.our_loss=='False':
+            total_loss = original_loss
+        else:
+            assert self.our_loss in ['True', 'False'], 'Input of our_loss is only True or False'
+        ###
+
+        self.log("train_nce_loss", total_loss, on_epoch=True, sync_dist=True)
 
         ### new metrics
         z1, z2 = z[0], z[1]
@@ -167,4 +178,4 @@ class SimCLR(BaseMethod):
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics
 
-        return nce_loss + class_loss
+        return total_loss + class_loss

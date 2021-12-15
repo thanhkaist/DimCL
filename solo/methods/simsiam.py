@@ -150,13 +150,24 @@ class SimSiam(BaseMethod):
         # ------- contrastive loss -------
         neg_cos_sim = simsiam_loss_func(p1, z2) / 2 + simsiam_loss_func(p2, z1) / 2
 
+        ### add our loss
+        original_loss = neg_cos_sim
+        our_loss = ours_loss_func(z1, z2, indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
+        if self.our_loss=='True':
+            total_loss = self.lam*our_loss + (1-self.lam)*original_loss
+        elif self.our_loss=='False':
+            total_loss = original_loss
+        else:
+            assert self.our_loss in ['True', 'False'], 'Input of our_loss is only True or False'
+        ###
+
         # calculate std of features
         z1_std = F.normalize(z1, dim=-1).std(dim=0).mean()
         z2_std = F.normalize(z2, dim=-1).std(dim=0).mean()
         z_std = (z1_std + z2_std) / 2
 
         metrics = {
-            "train_neg_cos_sim": neg_cos_sim,
+            "train_neg_cos_sim": total_loss,
             "train_z_std": z_std,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
@@ -202,4 +213,4 @@ class SimSiam(BaseMethod):
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics
 
-        return neg_cos_sim + class_loss
+        return total_loss + class_loss

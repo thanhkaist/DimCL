@@ -153,18 +153,19 @@ class BYOL(BaseMomentumMethod):
             Z_momentum = [self.momentum_projector(f) for f in momentum_feats]
 
         # ------- negative consine similarity loss -------
-        neg_cos_sim = 0
+        total_loss = 0
         # for v1 in range(self.num_large_crops):
         #     for v2 in np.delete(range(self.num_crops), v1):
         #         neg_cos_sim += byol_loss_func(P[v2], Z_momentum[v1])
+        byol_loss = byol_loss_func(P[1], Z_momentum[0]) + byol_loss_func(P[0], Z_momentum[1])
 
         ### add our loss
-        byol_loss = byol_loss_func(P[1], Z_momentum[0]) + byol_loss_func(P[0], Z_momentum[1])
+        original_loss = byol_loss
         our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
         if self.our_loss=='True':
-            neg_cos_sim = self.lam*our_loss + (1-self.lam)*byol_loss
+            total_loss = self.lam*our_loss + (1-self.lam)*original_loss
         elif self.our_loss=='False':
-            neg_cos_sim = byol_loss
+            total_loss = original_loss
         else:
             assert self.our_loss in ['True', 'False'], 'Input of our_loss is only True or False'
         ###
@@ -214,7 +215,7 @@ class BYOL(BaseMomentumMethod):
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics
 
-        return neg_cos_sim, z_std
+        return total_loss, z_std
 
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
         """Training step for BYOL reusing BaseMethod training step.
