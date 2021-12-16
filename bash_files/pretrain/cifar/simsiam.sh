@@ -1,7 +1,7 @@
 python3 ../../../main_pretrain.py \
     --dataset cifar100 \
     --backbone resnet18 \
-    --data_dir ~/workspace/trung_database/datasets/ \
+    --data_dir ~/workspace/datasets/ \
     --max_epochs 200 \
     --gpus 1 \
     --accelerator gpu \
