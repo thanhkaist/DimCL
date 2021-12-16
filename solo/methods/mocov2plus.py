@@ -215,6 +215,9 @@ class MoCoV2Plus(BaseMomentumMethod):
 
         self.log("train_nce_loss", total_loss, on_epoch=True, sync_dist=True)
 
+        with torch.no_grad():
+            z_std = F.normalize(torch.stack((q1_ori,q2_ori)), dim=-1).std(dim=1).mean()
+
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_P": (torch.stack((q1_ori,q2_ori))).sum(-1).mean(),
@@ -251,6 +254,8 @@ class MoCoV2Plus(BaseMomentumMethod):
 
             "Backbone/var": (torch.stack((feats1, feats2))).var(-1).mean(),
             "Backbone/max": (torch.stack((feats1, feats2))).max(),
+
+            "z_std": z_std,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics

@@ -156,9 +156,12 @@ class SimCLR(BaseMethod):
         ###
 
         self.log("train_nce_loss", total_loss, on_epoch=True, sync_dist=True)
+        
 
         ### new metrics
         z1, z2 = Z[0], Z[1]
+        with torch.no_grad():
+            z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
             "Logits/avg_sum_logits_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).sum(-1).mean(),
@@ -179,6 +182,9 @@ class SimCLR(BaseMethod):
             "Backbone/var": (torch.stack(out["feats"])).var(-1).mean(),
             "Backbone/max": (torch.stack(out["feats"])).max(),
             "Logits/var_Z": (torch.stack((z1,z2))).var(-1).mean(),
+
+            "z_std": z_std,
+
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics
