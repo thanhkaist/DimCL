@@ -173,8 +173,7 @@ class SimSiam(BaseMethod):
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
 
-        corr = 0.5*(torch.abs(corrcoef(z1).diag(-1)).mean() + torch.abs(corrcoef(z1).diag(1)).mean()
-        + torch.abs(corrcoef(z2).diag(-1)).mean() + torch.abs(corrcoef(z2).diag(1)).mean())
+        corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
         pear = pearsonr_cor(z1, z2).mean()
 
         ### new metrics

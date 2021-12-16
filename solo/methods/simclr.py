@@ -164,8 +164,7 @@ class SimCLR(BaseMethod):
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
         
-        corr = 0.5*(torch.abs(corrcoef(Z[0]).diag(-1)).mean() + torch.abs(corrcoef(Z[0]).diag(1)).mean()
-        + torch.abs(corrcoef(Z[1]).diag(-1)).mean() + torch.abs(corrcoef(Z[1]).diag(1)).mean())
+        corr = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
         pear = pearsonr_cor(Z[0], Z[1]).mean()
 
         metrics = {

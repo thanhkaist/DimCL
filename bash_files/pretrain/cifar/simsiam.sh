@@ -22,7 +22,7 @@ python3 ../../../main_pretrain.py \
     --num_crops_per_aug 1 1 \
     --zero_init_residual \
     --name simsiam_vit \
-    --project CIFAR100-200ep \
+    --project CIFAR100-200ep-test \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \
