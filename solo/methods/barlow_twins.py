@@ -153,6 +153,9 @@ class BarlowTwins(BaseMethod):
             assert self.our_loss in ['True', 'False'], 'Input of our_loss is only True or False'
         ###
 
+        with torch.no_grad():
+            z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
+
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
@@ -176,6 +179,8 @@ class BarlowTwins(BaseMethod):
 
             "Backbone/var": (torch.stack((feats1,feats2))).var(-1).mean(),
             "Backbone/max": (torch.stack((feats1,feats2))).max(),
+
+            "z_std": z_std,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics
