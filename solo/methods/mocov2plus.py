@@ -28,6 +28,7 @@ from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 from solo.utils.misc import gather, get_rank
 from solo.losses.oursloss import ours_loss_func
+from solo.utils.metrics import corrcoef, pearsonr_cor
 
 
 class MoCoV2Plus(BaseMomentumMethod):
@@ -218,6 +219,9 @@ class MoCoV2Plus(BaseMomentumMethod):
         with torch.no_grad():
             z_std = F.normalize(torch.stack((q1_ori,q2_ori)), dim=-1).std(dim=1).mean()
 
+        corr = 0.5*(torch.abs(corrcoef(q1_ori).diag(-1)).mean() + torch.abs(corrcoef(q1_ori).diag(1)).mean()
+        + torch.abs(corrcoef(q2_ori).diag(-1)).mean() + torch.abs(corrcoef(q2_ori).diag(1)).mean())
+        pear = pearsonr_cor(q1_ori, q2_ori).mean()
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_P": (torch.stack((q1_ori,q2_ori))).sum(-1).mean(),
@@ -255,7 +259,9 @@ class MoCoV2Plus(BaseMomentumMethod):
             "Backbone/var": (torch.stack((feats1, feats2))).var(-1).mean(),
             "Backbone/max": (torch.stack((feats1, feats2))).max(),
 
-            "z_std": z_std,
+            "train_z_std": z_std,
+            "Corr/corr": corr,
+            "Corr/pear": pear,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics

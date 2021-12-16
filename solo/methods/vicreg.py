@@ -27,6 +27,7 @@ from solo.methods.base import BaseMethod
 from solo.utils.misc import gather, get_rank
 import torch.nn.functional as F
 from solo.losses.oursloss import ours_loss_func
+from solo.utils.metrics import corrcoef, pearsonr_cor
 
 
 class VICReg(BaseMethod):
@@ -161,6 +162,11 @@ class VICReg(BaseMethod):
         self.log("train_vicreg_loss", total_loss, on_epoch=True, sync_dist=True)
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
+        
+        corr = 0.5*(torch.abs(corrcoef(z1).diag(-1)).mean() + torch.abs(corrcoef(z1).diag(1)).mean()
+        + torch.abs(corrcoef(z2).diag(-1)).mean() + torch.abs(corrcoef(z2).diag(1)).mean())
+        pear = pearsonr_cor(z1, z2).mean()
+
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
@@ -185,7 +191,9 @@ class VICReg(BaseMethod):
             "Backbone/var": (torch.stack((feats1,feats2))).var(-1).mean(),
             "Backbone/max": (torch.stack((feats1,feats2))).max(),
 
-            "z_std": z_std,
+            "train_z_std": z_std,
+            "Corr/corr": corr,
+            "Corr/pear": pear,
 
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)

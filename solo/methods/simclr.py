@@ -27,6 +27,7 @@ from solo.methods.base import BaseMethod
 from solo.utils.misc import gather, get_rank
 import torch.nn.functional as F
 from solo.losses.oursloss import ours_loss_func
+from solo.utils.metrics import corrcoef, pearsonr_cor
 import ipdb
 
 class SimCLR(BaseMethod):
@@ -162,6 +163,11 @@ class SimCLR(BaseMethod):
         z1, z2 = Z[0], Z[1]
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
+        
+        corr = 0.5*(torch.abs(corrcoef(Z[0]).diag(-1)).mean() + torch.abs(corrcoef(Z[0]).diag(1)).mean()
+        + torch.abs(corrcoef(Z[1]).diag(-1)).mean() + torch.abs(corrcoef(Z[1]).diag(1)).mean())
+        pear = pearsonr_cor(Z[0], Z[1]).mean()
+
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
             "Logits/avg_sum_logits_Z_normalized": F.normalize(torch.stack((z1,z2)), dim=-1).sum(-1).mean(),
@@ -183,7 +189,9 @@ class SimCLR(BaseMethod):
             "Backbone/max": (torch.stack(out["feats"])).max(),
             "Logits/var_Z": (torch.stack((z1,z2))).var(-1).mean(),
 
-            "z_std": z_std,
+            "train_z_std": z_std,
+            "Corr/corr": corr,
+            "Corr/pear": pear,
 
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)

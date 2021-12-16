@@ -27,6 +27,7 @@ from solo.losses.simsiam import simsiam_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.misc import gather, get_rank
 from solo.losses.oursloss import ours_loss_func
+from solo.utils.metrics import corrcoef, pearsonr_cor
 
 
 class SimSiam(BaseMethod):
@@ -172,6 +173,10 @@ class SimSiam(BaseMethod):
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
 
+        corr = 0.5*(torch.abs(corrcoef(z1).diag(-1)).mean() + torch.abs(corrcoef(z1).diag(1)).mean()
+        + torch.abs(corrcoef(z2).diag(-1)).mean() + torch.abs(corrcoef(z2).diag(1)).mean())
+        pear = pearsonr_cor(z1, z2).mean()
+
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_P": (torch.stack((p1,p2))).sum(-1).mean(),
@@ -209,6 +214,9 @@ class SimSiam(BaseMethod):
 
             "Backbone/var": (torch.stack((feats1, feats2))).var(-1).mean(),
             "Backbone/max": (torch.stack((feats1, feats2))).max(),
+
+            "Corr/corr": corr,
+            "Corr/pear": pear,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics

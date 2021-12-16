@@ -29,7 +29,8 @@ from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 from solo.utils.misc import gather, get_rank
 from solo.losses.oursloss import ours_loss_func
-
+from solo.utils.metrics import corrcoef, pearsonr_cor
+import ipdb
 
 class BYOL(BaseMomentumMethod):
     def __init__(
@@ -174,6 +175,10 @@ class BYOL(BaseMomentumMethod):
         with torch.no_grad():
             z_std = F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).std(dim=1).mean()
         
+        # ipdb.set_trace()
+        corr = 0.5*(torch.abs(corrcoef(Z[0]).diag(-1)).mean() + torch.abs(corrcoef(Z[0]).diag(1)).mean()
+        + torch.abs(corrcoef(Z[1]).diag(-1)).mean() + torch.abs(corrcoef(Z[1]).diag(1)).mean())
+        pear = pearsonr_cor(Z[0], Z[1]).mean()
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_P": (torch.stack(P[: self.num_large_crops])).sum(-1).mean(),
@@ -211,6 +216,9 @@ class BYOL(BaseMomentumMethod):
 
             "Backbone/var": (torch.stack(feats[: self.num_large_crops])).var(-1).mean(),
             "Backbone/max": (torch.stack(feats[: self.num_large_crops])).max(),
+
+            "Corr/corr": corr,
+            "Corr/pear": pear,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         ### new metrics
