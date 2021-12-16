@@ -1,6 +1,6 @@
 python3 ../../../main_pretrain.py \
     --dataset cifar100 \
-    --backbone vit_tiny \
+    --backbone resnet18 \
     --data_dir ~/workspace/trung_database/datasets/ \
     --max_epochs 200 \
     --gpus 5 \
@@ -25,8 +25,8 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 0.0 0.0 \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
-    --name vicreg_vit \
-    --project CIFAR100-200ep-test \
+    --name vicreg_res18 \
+    --project CIFAR100-200ep \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \

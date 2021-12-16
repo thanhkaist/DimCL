@@ -1,6 +1,6 @@
 python3 ../../../main_pretrain.py \
     --dataset cifar100 \
-    --backbone vit_tiny \
+    --backbone resnet18 \
     --data_dir ~/workspace/trung_database/datasets/ \
     --max_epochs 200 \
     --gpus 3 \
@@ -24,8 +24,8 @@ python3 ../../../main_pretrain.py \
     --solarization_prob 0.0 0.2 \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
-    --name barlow_vit \
-    --project CIFAR100-200ep-test \
+    --name barlow_res18 \
+    --project CIFAR100-200ep \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \

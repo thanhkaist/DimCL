@@ -165,6 +165,8 @@ class SimCLR(BaseMethod):
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
             corr = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
             pear = pearsonr_cor(Z[0], Z[1]).mean()
+            corr_feats = torch.abs(corrcoef(feats[0], feats[1]).diag(-1)).mean()
+            pear_feats = pearsonr_cor(feats[0], feats[1]).mean()
 
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),
@@ -190,6 +192,8 @@ class SimCLR(BaseMethod):
             "train_z_std": z_std,
             "Corr/corr": corr,
             "Corr/pear": pear,
+            "Corr/corr_feats": corr_feats,
+            "Corr/pear_feats": pear_feats,
 
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
