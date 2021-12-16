@@ -174,9 +174,8 @@ class BYOL(BaseMomentumMethod):
         # calculate std of features
         with torch.no_grad():
             z_std = F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).std(dim=1).mean()
-        
-        corr = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
-        pear = pearsonr_cor(Z[0], Z[1]).mean()
+            corr = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
+            pear = pearsonr_cor(Z[0], Z[1]).mean()
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_P": (torch.stack(P[: self.num_large_crops])).sum(-1).mean(),

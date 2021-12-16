@@ -26,7 +26,7 @@ python3 ../../../main_pretrain.py \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
     --name vicreg_vit \
-    --project CIFAR100-200ep \
+    --project CIFAR100-200ep-test \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \

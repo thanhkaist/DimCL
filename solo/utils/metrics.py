@@ -75,8 +75,8 @@ def weighted_mean(outputs: List[Dict], key: str, batch_size_key: str) -> float:
 
 
 def corrcoef(z1, z2):
-    corr = np.corrcoef(z1, z2)
-    return torch.from_numpy(corr)
+    corr = np.corrcoef(z1.detach().cpu(), z2.detach().cpu())
+    return torch.from_numpy(corr).to(z1.device)
 
 def pearsonr_cor(x,y):
     return pearsonr(x,y)

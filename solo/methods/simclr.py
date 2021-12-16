@@ -163,9 +163,8 @@ class SimCLR(BaseMethod):
         z1, z2 = Z[0], Z[1]
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
-        
-        corr = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
-        pear = pearsonr_cor(Z[0], Z[1]).mean()
+            corr = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
+            pear = pearsonr_cor(Z[0], Z[1]).mean()
 
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),

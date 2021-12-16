@@ -156,9 +156,9 @@ class BarlowTwins(BaseMethod):
 
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
-
-        corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
-        pear = pearsonr_cor(z1, z2).mean()
+            corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
+            pear = pearsonr_cor(z1, z2).mean()
+            
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_Z": (torch.stack((z1,z2))).sum(-1).mean(),

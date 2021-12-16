@@ -218,9 +218,9 @@ class MoCoV2Plus(BaseMomentumMethod):
 
         with torch.no_grad():
             z_std = F.normalize(torch.stack((q1_ori,q2_ori)), dim=-1).std(dim=1).mean()
+            corr = torch.abs(corrcoef(q1_ori, q2_ori).diag(-1)).mean()
+            pear = pearsonr_cor(q1_ori, q2_ori).mean()
 
-        corr = torch.abs(corrcoef(q1_ori, q2_ori).diag(-1)).mean()
-        pear = pearsonr_cor(q1_ori, q2_ori).mean()
         ### new metrics
         metrics = {
             "Logits/avg_sum_logits_P": (torch.stack((q1_ori,q2_ori))).sum(-1).mean(),

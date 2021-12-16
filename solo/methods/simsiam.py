@@ -172,9 +172,10 @@ class SimSiam(BaseMethod):
             "train_z_std": z_std,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
-
-        corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
-        pear = pearsonr_cor(z1, z2).mean()
+        
+        with torch.no_grad():
+            corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
+            pear = pearsonr_cor(z1, z2).mean()
 
         ### new metrics
         metrics = {

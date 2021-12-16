@@ -162,9 +162,8 @@ class VICReg(BaseMethod):
         self.log("train_vicreg_loss", total_loss, on_epoch=True, sync_dist=True)
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
-        
-        corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
-        pear = pearsonr_cor(z1, z2).mean()
+            corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
+            pear = pearsonr_cor(z1, z2).mean()
 
         ### new metrics
         metrics = {
