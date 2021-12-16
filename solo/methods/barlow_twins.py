@@ -156,8 +156,8 @@ class BarlowTwins(BaseMethod):
 
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
-            corr = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
-            pear = pearsonr_cor(z1, z2).mean()
+            corr_z = torch.abs(corrcoef(z1, z2).diag(-1)).mean()
+            pear_z = pearsonr_cor(z1, z2).mean()
             corr_feats = torch.abs(corrcoef(feats1, feats2).diag(-1)).mean()
             pear_feats = pearsonr_cor(feats1, feats2).mean()
 
@@ -186,8 +186,8 @@ class BarlowTwins(BaseMethod):
             "Backbone/max": (torch.stack((feats1,feats2))).max(),
 
             "train_z_std": z_std,
-            "Corr/corr": corr,
-            "Corr/pear": pear,
+            "Corr/corr_z": corr_z,
+            "Corr/pear_z": pear_z,
             "Corr/corr_feats": corr_feats,
             "Corr/pear_feats": pear_feats,
         }

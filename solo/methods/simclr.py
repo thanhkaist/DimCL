@@ -163,8 +163,8 @@ class SimCLR(BaseMethod):
         z1, z2 = Z[0], Z[1]
         with torch.no_grad():
             z_std = F.normalize(torch.stack((z1,z2)), dim=-1).std(dim=1).mean()
-            corr = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
-            pear = pearsonr_cor(Z[0], Z[1]).mean()
+            corr_z = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
+            pear_z = pearsonr_cor(Z[0], Z[1]).mean()
             corr_feats = torch.abs(corrcoef(feats[0], feats[1]).diag(-1)).mean()
             pear_feats = pearsonr_cor(feats[0], feats[1]).mean()
 
@@ -190,8 +190,8 @@ class SimCLR(BaseMethod):
             "Logits/var_Z": (torch.stack((z1,z2))).var(-1).mean(),
 
             "train_z_std": z_std,
-            "Corr/corr": corr,
-            "Corr/pear": pear,
+            "Corr/corr_z": corr_z,
+            "Corr/pear_z": pear_z,
             "Corr/corr_feats": corr_feats,
             "Corr/pear_feats": pear_feats,
 
