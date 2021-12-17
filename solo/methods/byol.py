@@ -155,12 +155,9 @@ class BYOL(BaseMomentumMethod):
 
         # ------- negative consine similarity loss -------
         total_loss = 0
-        # for v1 in range(self.num_large_crops):
-        #     for v2 in np.delete(range(self.num_crops), v1):
-        #         neg_cos_sim += byol_loss_func(P[v2], Z_momentum[v1])
-        # byol_loss = byol_loss_func(P[1], Z_momentum[0]) + byol_loss_func(P[0], Z_momentum[1])
-        bn = torch.nn.BatchNorm1d(Z[0].size(1), affine=False).to(Z[0].device)
-        byol_loss = byol_loss_func(P[1], bn(Z[0])) + byol_loss_func(P[0], bn(Z[1]))
+        byol_loss = byol_loss_func(P[1], Z_momentum[0]) + byol_loss_func(P[0], Z_momentum[1])
+        # bn = torch.nn.BatchNorm1d(Z[0].size(1), affine=False).to(Z[0].device)
+        # byol_loss = byol_loss_func(P[1], bn(Z[0])) + byol_loss_func(P[0], bn(Z[1]))
 
         ### add our loss
         original_loss = byol_loss
