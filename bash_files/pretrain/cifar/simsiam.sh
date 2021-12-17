@@ -34,3 +34,4 @@ python3 ../../../main_pretrain.py \
     --lam 0.1 \
     --tau_decor 0.1 \
     --our_loss False \
+    
