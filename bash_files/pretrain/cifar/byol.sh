@@ -1,9 +1,9 @@
 python3 ../../../main_pretrain.py \
     --dataset cifar100 \
     --backbone resnet18 \
-    --data_dir ~/workspace/trungpham/datasets/ \
+    --data_dir ~/workspace/datasets/ \
     --max_epochs 200 \
-    --gpus 7 \
+    --gpus 0 \
     --accelerator gpu \
     --precision 16 \
     --optimizer sgd \
@@ -12,8 +12,8 @@ python3 ../../../main_pretrain.py \
     --eta_lars 0.02 \
     --exclude_bias_n_norm \
     --scheduler warmup_cosine \
-    --lr 2 \
-    --classifier_lr 0.5 \
+    --lr 1.0 \
+    --classifier_lr 0.1 \
     --weight_decay 1e-5 \
     --batch_size 256 \
     --num_workers 4 \
@@ -25,7 +25,7 @@ python3 ../../../main_pretrain.py \
     --solarization_prob 0.0 0.2 \
     --crop_size 32 \
     --num_crops_per_aug 1 1 \
-    --name byol_res18_ours_cls0.5 \
+    --name byol_res18 \
     --project CIFAR100-200ep \
     --entity kaistaim \
     --wandb \
@@ -40,7 +40,7 @@ python3 ../../../main_pretrain.py \
     --knn_eval \
     --lam 0.1 \
     --tau_decor 0.1 \
-    --our_loss True \
+    --our_loss False \
 
 # python3 ../../../main_pretrain.py \
 #     --dataset cifar100 \
