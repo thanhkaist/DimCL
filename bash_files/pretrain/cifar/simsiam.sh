@@ -1,9 +1,9 @@
 python3 ../../../main_pretrain.py \
     --dataset cifar100 \
     --backbone resnet18 \
-    --data_dir ~/workspace/datasets/ \
+    --data_dir ~/workspace/trungpham/datasets/ \
     --max_epochs 200 \
-    --gpus 1 \
+    --gpus 0 \
     --accelerator gpu \
     --precision 16 \
     --optimizer sgd \
@@ -21,8 +21,8 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 0.0 0.0 \
     --num_crops_per_aug 1 1 \
     --zero_init_residual \
-    --name simsiam_res18 \
-    --project CIFAR100-200ep \
+    --name simsiam_res18-new \
+    --project CIFAR100-200ep-test \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \
