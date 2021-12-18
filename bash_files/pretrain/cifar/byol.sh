@@ -42,6 +42,7 @@ python3 ../../../main_pretrain.py \
     --tau_decor 0.1 \
     --our_loss False \
 
+
 # python3 ../../../main_pretrain.py \
 #     --dataset cifar100 \
 #     --backbone resnet18 \
