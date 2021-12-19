@@ -28,7 +28,7 @@ from solo.losses.byol import byol_loss_func
 from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 from solo.utils.misc import gather, get_rank
-from solo.losses.oursloss import ours_loss_func
+from solo.losses.oursloss import ours_loss_func, ours_simple_loss_func
 from solo.utils.metrics import corrcoef, pearsonr_cor
 import ipdb
 
@@ -39,6 +39,7 @@ class BYOL(BaseMomentumMethod):
         proj_hidden_dim: int,
         pred_hidden_dim: int,
         lam: float,
+        lam_simple: float,
         tau_decor: float,
         our_loss: str,
         **kwargs,
@@ -54,6 +55,7 @@ class BYOL(BaseMomentumMethod):
         super().__init__(**kwargs)
 
         self.lam = lam
+        self.lam_simple = lam_simple
         self.tau_decor = tau_decor
         self.our_loss = our_loss
 
@@ -98,6 +100,7 @@ class BYOL(BaseMomentumMethod):
         parser.add_argument("--lam", type=float, default=0.1)
         parser.add_argument("--tau_decor", type=float, default=0.1)
         parser.add_argument("--our_loss", type=str, default='True')
+        parser.add_argument("--lam_simple", type=float, default=1.0)
 
 
         return parent_parser
@@ -163,7 +166,10 @@ class BYOL(BaseMomentumMethod):
         original_loss = byol_loss
         if self.our_loss=='True':
             our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
+            # our_loss = ours_simple_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), 
+            #                 tau_decor = self.tau_decor, lam_simple = self.lam_simple)
             total_loss = self.lam*our_loss + (1-self.lam)*original_loss
+            
         elif self.our_loss=='False':
             total_loss = original_loss
         else:
@@ -173,9 +179,9 @@ class BYOL(BaseMomentumMethod):
         # calculate std of features
         with torch.no_grad():
             z_std = F.normalize(torch.stack(Z[: self.num_large_crops]), dim=-1).std(dim=1).mean()
-            corr_z = torch.abs(corrcoef(Z[0], Z[1]).diag(-1)).mean()
+            corr_z = (torch.abs(corrcoef(Z[0], Z[1]).triu(1)) + torch.abs(corrcoef(Z[0], Z[1]).tril(-1))).mean()
             pear_z = pearsonr_cor(Z[0], Z[1]).mean()
-            corr_feats = torch.abs(corrcoef(feats[0], feats[1]).diag(-1)).mean()
+            corr_feats = (torch.abs(corrcoef(feats[0], feats[1]).triu(1)) + torch.abs(corrcoef(feats[0], feats[1]).tril(-1)) ).mean()
             pear_feats = pearsonr_cor(feats[0], feats[1]).mean()
 
         ### new metrics

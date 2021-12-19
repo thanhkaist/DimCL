@@ -127,3 +127,39 @@ def ours_loss_func_multigpu(
     return loss
 
 ### End of our loss
+
+### simple loss function for single gpu
+def ours_simple_loss_func(
+    z1: torch.Tensor, 
+    z2: torch.Tensor, 
+    indexes: torch.Tensor, 
+    tau_decor: float = 0.1, 
+    lam_simple = 1.0,
+    extra_pos_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+    
+    """Computes ours's loss given batch of projected features z1 from view 1 and
+    projected features z2 from view 2.
+    Args:
+        z1 (torch.Tensor): NxD Tensor containing projected features from view 1.
+        z2 (torch.Tensor): NxD Tensor containing projected features from view 2.
+        temperature (float): temperature factor for the loss. Defaults to 0.1.
+        extra_pos_mask (Optional[torch.Tensor]): boolean mask containing extra positives other
+            than normal across-view positives. Defaults to None.
+    Returns:
+        torch.Tensor: ours loss.
+    """
+
+    device = z1.device
+    _, D = z1.size()
+    bn = torch.nn.BatchNorm1d(D, affine=False).to(device)
+
+    z1 = bn(z1).T
+    z2 = bn(z2).T
+
+    sim = torch.einsum("if, jf -> ij", z1, z2)
+    pos_sim = sim.diag(0).mean()
+    neg_sim = (sim.triu(1) + sim.tril(-1)).mean()
+
+    # loss
+    loss = - (pos_sim + lam_simple * neg_sim)
+    return loss
