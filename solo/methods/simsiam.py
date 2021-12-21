@@ -185,7 +185,7 @@ class SimSiam(BaseMethod):
         with torch.no_grad():
             corr_z = (torch.abs(corrcoef(z1, z2).triu(1)) + torch.abs(corrcoef(z1, z2).tril(-1))).mean()
             pear_z = pearsonr_cor(z1, z2).mean()
-            corr_feats = (torch.abs(corrcoef(feats1, feats2).triu(1)) + torch.abs(corrcoef(feats1[0], feats2).tril(-1)) ).mean()
+            corr_feats = (torch.abs(corrcoef(feats1, feats2).triu(1)) + torch.abs(corrcoef(feats1, feats2).tril(-1)) ).mean()
             pear_feats = pearsonr_cor(feats1, feats2).mean()
 
         ### new metrics
