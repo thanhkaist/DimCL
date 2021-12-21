@@ -5,7 +5,7 @@ python3 ../../../main_pretrain.py \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
     --max_epochs 200 \
-    --gpus 4,5,6,7 \
+    --gpus 1 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -18,6 +18,7 @@ python3 ../../../main_pretrain.py \
     --exclude_bias_n_norm \
     --scheduler warmup_cosine \
     --lr 0.3 \
+    --classifier_lr 0.3 \
     --weight_decay 1e-4 \
     --batch_size 256 \
     --brightness 0.4 \
