@@ -29,6 +29,7 @@ from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 from solo.utils.misc import gather, get_rank
 from solo.losses.oursloss import ours_loss_func, ours_simple_loss_func
+from solo.losses.barlow import barlow_loss_func
 from solo.utils.metrics import corrcoef, pearsonr_cor
 import ipdb
 
@@ -40,6 +41,7 @@ class BYOL(BaseMomentumMethod):
         pred_hidden_dim: int,
         lam: float,
         lam_simple: float,
+        lamb_barlow: float,
         tau_decor: float,
         our_loss: str,
         **kwargs,
@@ -58,6 +60,7 @@ class BYOL(BaseMomentumMethod):
         self.lam_simple = lam_simple
         self.tau_decor = tau_decor
         self.our_loss = our_loss
+        self.lamb_barlow = lamb_barlow
 
         # projector
         self.projector = nn.Sequential(
@@ -101,6 +104,7 @@ class BYOL(BaseMomentumMethod):
         parser.add_argument("--tau_decor", type=float, default=0.1)
         parser.add_argument("--our_loss", type=str, default='True')
         parser.add_argument("--lam_simple", type=float, default=1.0)
+        parser.add_argument("--lamb_barlow", type=float, default=0.0051)
 
 
         return parent_parser
@@ -165,6 +169,7 @@ class BYOL(BaseMomentumMethod):
         ### add our loss
         original_loss = byol_loss
         if self.our_loss=='True':
+            # our_loss = barlow_loss_func(Z[0], Z[1], lamb=self.lamb_barlow)
             our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
             # our_loss = ours_simple_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), 
             #                 tau_decor = self.tau_decor, lam_simple = self.lam_simple)
