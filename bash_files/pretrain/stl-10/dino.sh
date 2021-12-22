@@ -1,7 +1,7 @@
 python3 ../../main_pretrain.py \
     --dataset stl10 \
     --backbone resnet18 \
-    --data_dir ~/workspace/trung_database/datasets/ \
+    --data_dir ~/workspace/datasets/ \
     --max_epochs 200 \
     --gpus 0 \
     --accelerator gpu \

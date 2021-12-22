@@ -1,7 +1,7 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
     --backbone vit_tiny \
-    --data_dir ~/workspace/trung_database/datasets/ \
+    --data_dir ~/workspace/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/test \
     --max_epochs 200 \
