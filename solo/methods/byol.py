@@ -28,7 +28,7 @@ from solo.losses.byol import byol_loss_func
 from solo.methods.base import BaseMomentumMethod
 from solo.utils.momentum import initialize_momentum_params
 from solo.utils.misc import gather, get_rank
-from solo.losses.oursloss import ours_loss_func, ours_simple_loss_func
+from solo.losses.oursloss import ours_loss_func, ours_simple_loss_func, ours_loss_func_multigpu
 from solo.losses.barlow import barlow_loss_func
 from solo.utils.metrics import corrcoef, pearsonr_cor
 import ipdb
@@ -162,17 +162,17 @@ class BYOL(BaseMomentumMethod):
 
         # ------- negative consine similarity loss -------
         total_loss = 0
+        # byol_loss = byol_loss_func(P[1], Z_momentum[0] + P[0]) + byol_loss_func(P[0], Z_momentum[1] + P[1])
         byol_loss = byol_loss_func(P[1], Z_momentum[0]) + byol_loss_func(P[0], Z_momentum[1])
-        # bn = torch.nn.BatchNorm1d(Z[0].size(1), affine=False).to(Z[0].device)
-        # byol_loss = byol_loss_func(P[1], bn(Z[0])) + byol_loss_func(P[0], bn(Z[1]))
 
         ### add our loss
         original_loss = byol_loss
         if self.our_loss=='True':
             # our_loss = barlow_loss_func(Z[0], Z[1], lamb=self.lamb_barlow)
-            our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
+            # our_loss = ours_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
             # our_loss = ours_simple_loss_func(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), 
             #                 tau_decor = self.tau_decor, lam_simple = self.lam_simple)
+            our_loss = ours_loss_func_multigpu(Z[0], Z[1], indexes=batch[0].repeat(self.num_large_crops + self.num_small_crops), tau_decor = self.tau_decor)
             total_loss = self.lam*our_loss + (1-self.lam)*original_loss
             
         elif self.our_loss=='False':

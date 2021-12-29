@@ -6,6 +6,7 @@ wandb/
 wandb*/
 
 code/
+*stochastic.py
 
 # umap dir
 auto_umap/

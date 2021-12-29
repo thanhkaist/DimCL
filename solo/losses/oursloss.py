@@ -98,32 +98,42 @@ def ours_loss_func_multigpu(
     """
 
     _, D = z1.size()
+    device = z1.device
     bn = torch.nn.BatchNorm1d(D, affine=False).to(z1.device)
-    z1 = bn(z1).T
-    z2 = bn(z2).T
 
+    z1 = bn(z1)
+    z2 = bn(z2)
+
+    gathered_z1 = gather(z1)
+    gathered_z2 = gather(z2)
+
+    z1 = gathered_z1.T
+    z2 = gathered_z2.T
+
+    b = z1.size(0)
     z = torch.cat((z1, z2), dim=0)
 
     z = F.normalize(z, dim=-1)
-    gathered_z = gather(z)
 
-    ipdb.set_trace()
+    logits = torch.einsum("if, jf -> ij", z, z) / tau_decor
+    logits_max, _ = torch.max(logits, dim=1, keepdim=True)
+    logits = logits - logits_max.detach()
 
-    sim = torch.exp(torch.einsum("if, jf -> ij", z, gathered_z) / tau_decor)
+    # positive mask are matches i, j (i from aug1, j from aug2), where i == j and matches j, i
+    pos_mask = torch.zeros((2 * b, 2 * b), dtype=torch.bool, device=device)
+    pos_mask[:, b:].fill_diagonal_(True)
+    pos_mask[b:, :].fill_diagonal_(True)
 
-    gathered_indexes = gather(indexes)
+    # all matches excluding the main diagonal
+    logit_mask = torch.ones_like(pos_mask, device=device).fill_diagonal_(0)
 
-    indexes = indexes.unsqueeze(0)
-    gathered_indexes = gathered_indexes.unsqueeze(0)
-    # positives
-    pos_mask = indexes.t() == gathered_indexes
-    pos_mask[:, z.size(0) * get_rank() :].fill_diagonal_(0)
-    # negatives
-    neg_mask = indexes.t() != gathered_indexes
+    exp_logits = torch.exp(logits) * logit_mask
+    log_prob = logits - torch.log(exp_logits.sum(1, keepdim=True))
 
-    pos = torch.sum(sim * pos_mask, 1)
-    neg = torch.sum(sim * neg_mask, 1)
-    loss = -(torch.mean(torch.log(pos / (pos + neg))))
+    # compute mean of log-likelihood over positives
+    mean_log_prob_pos = (pos_mask * log_prob).sum(1) / pos_mask.sum(1)
+    # loss
+    loss = -mean_log_prob_pos.mean()
     return loss
 
 ### End of our loss
