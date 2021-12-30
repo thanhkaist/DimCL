@@ -64,7 +64,7 @@ class SimSiam(BaseMethod):
             nn.BatchNorm1d(proj_hidden_dim),
             nn.ReLU(),
             nn.Linear(proj_hidden_dim, proj_output_dim),
-            # nn.BatchNorm1d(proj_output_dim, affine=False),
+            nn.BatchNorm1d(proj_output_dim, affine=False),
         )
         self.projector[6].bias.requires_grad = False  # hack: not use bias as it is followed by BN
 

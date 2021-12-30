@@ -5,7 +5,7 @@ python3 ../../../main_pretrain.py \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
     --max_epochs 200 \
-    --gpus 4,5,6,7 \
+    --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
     --sync_batchnorm \
@@ -16,8 +16,8 @@ python3 ../../../main_pretrain.py \
     --eta_lars 0.02 \
     --exclude_bias_n_norm \
     --scheduler warmup_cosine \
-    --lr 1.0 \
-    --classifier_lr 0.25 \
+    --lr 4.0 \
+    --classifier_lr 1.0 \
     --weight_decay 1e-5 \
     --batch_size 256 \
     --num_workers 4 \
@@ -28,7 +28,7 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 1.0 0.1 \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
-    --name byol_res18_ours_multi_gpu_enc1.0_cls0.25 \
+    --name byol_res18_8gpu \
     --entity kaistaim \
     --project Imagenet100-200ep \
     --wandb \
@@ -42,7 +42,7 @@ python3 ../../../main_pretrain.py \
     --knn_eval \
     --lam 0.1 \
     --tau_decor 0.1 \
-    --our_loss True \
+    --our_loss False \
     # --dali \
 
 # python3 ../../../main_pretrain.py \
