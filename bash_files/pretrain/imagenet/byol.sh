@@ -44,3 +44,4 @@ python3 ../../../main_pretrain.py \
     --tau_decor 0.1 \
     --our_loss False \
     --knn_eval \
+    --keep_previous_checkpoints \

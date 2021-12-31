@@ -140,6 +140,7 @@ def main():
             args,
             logdir=os.path.join(args.checkpoint_dir, args.method),
             frequency=args.checkpoint_frequency,
+            keep_previous_checkpoints=args.keep_previous_checkpoints,
         )
         callbacks.append(ckpt)
 
