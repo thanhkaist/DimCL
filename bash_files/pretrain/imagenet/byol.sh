@@ -28,7 +28,7 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 1.0 0.1 \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
-    --name byol_res50_bsz64 \
+    --name byol_res50_8gpu_bsz64 \
     --project Imagenet1K-200ep \
     --entity kaistaim \
     --wandb \
