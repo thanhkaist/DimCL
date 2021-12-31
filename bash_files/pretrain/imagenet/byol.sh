@@ -42,7 +42,6 @@ python3 ../../../main_pretrain.py \
     --lam 0.1 \
     --tau_decor 0.1 \
     --our_loss True \
-    --knn_eval \
     --keep_previous_checkpoints \
     --checkpoint_frequency 5 \
 
@@ -90,6 +89,5 @@ python3 ../../../main_pretrain.py \
 #     --lam 0.1 \
 #     --tau_decor 0.1 \
 #     --our_loss False \
-#     --knn_eval \
 #     --keep_previous_checkpoints \
 #     --checkpoint_frequency 5 \
