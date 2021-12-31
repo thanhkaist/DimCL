@@ -1,10 +1,10 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet \
     --backbone resnet50 \
-    --data_dir ~/workspace/trung_database/datasets/ \
+    --data_dir ~/workspace/datasets/ \
     --train_dir imagenet/train \
     --val_dir imagenet/val \
-    --max_epochs 100 \
+    --max_epochs 200 \
     --gpus 0,1,2,3,4,5,6,7 \
     --accelerator gpu \
     --strategy ddp \
@@ -16,10 +16,10 @@ python3 ../../../main_pretrain.py \
     --exclude_bias_n_norm \
     --scheduler warmup_cosine \
     --lr 0.45 \
-    --accumulate_grad_batches 16 \
     --classifier_lr 0.2 \
+    --accumulate_grad_batches 16 \
     --weight_decay 1e-6 \
-    --batch_size 256 \
+    --batch_size 64 \
     --num_workers 4 \
     --brightness 0.4 \
     --contrast 0.4 \
@@ -28,7 +28,7 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 1.0 0.1 \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
-    --name byol_res50 \
+    --name byol_res50_bsz64 \
     --project Imagenet1K-200ep \
     --entity kaistaim \
     --wandb \
@@ -40,7 +40,7 @@ python3 ../../../main_pretrain.py \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
     --momentum_classifier \
-    --knn_eval \
     --lam 0.1 \
     --tau_decor 0.1 \
     --our_loss False \
+    --knn_eval \

@@ -1,6 +1,6 @@
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \
-    --backbone resnet18 \
+    --backbone resnet50 \
     --data_dir ~/workspace/datasets/ \
     --train_dir imagenet-100/train \
     --val_dir imagenet-100/val \
@@ -19,7 +19,7 @@ python3 ../../../main_pretrain.py \
     --lr 4.0 \
     --classifier_lr 1.0 \
     --weight_decay 1e-5 \
-    --batch_size 256 \
+    --batch_size 64 \
     --num_workers 4 \
     --brightness 0.4 \
     --contrast 0.4 \
@@ -28,7 +28,7 @@ python3 ../../../main_pretrain.py \
     --gaussian_prob 1.0 0.1 \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
-    --name byol_res18_8gpu \
+    --name byol_res50_ours_8gpu_bsz64 \
     --entity kaistaim \
     --project Imagenet100-200ep \
     --wandb \
@@ -39,10 +39,10 @@ python3 ../../../main_pretrain.py \
     --pred_hidden_dim 8192 \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
-    --knn_eval \
     --lam 0.1 \
     --tau_decor 0.1 \
-    --our_loss False \
+    --our_loss True \
+    --knn_eval \
     # --dali \
 
 # python3 ../../../main_pretrain.py \
