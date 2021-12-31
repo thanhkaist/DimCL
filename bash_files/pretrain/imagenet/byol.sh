@@ -29,7 +29,7 @@ python3 ../../../main_pretrain.py \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
     --name byol_res50_ours_8gpu_bsz64 \
-    --project Imagenet1K-200ep \
+    --project Imagenet1K-100ep \
     --entity kaistaim \
     --wandb \
     --save_checkpoint \
