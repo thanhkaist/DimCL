@@ -39,7 +39,6 @@ python3 ../../../main_pretrain.py \
     --pred_hidden_dim 4096 \
     --base_tau_momentum 0.99 \
     --final_tau_momentum 1.0 \
-    --momentum_classifier \
     --lam 0.1 \
     --tau_decor 0.1 \
     --our_loss False \
