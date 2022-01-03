@@ -6,6 +6,7 @@ wandb/
 wandb*/
 
 code/
+checkpoint/
 *stochastic.py
 
 # umap dir
