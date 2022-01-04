@@ -8,9 +8,10 @@ wandb*/
 code/
 checkpoint/
 *stochastic.py
-*load_checkpoint.py
+*load_checkpoint*
 test.sh
 plot.ipynb
+*.pdf
 
 # umap dir
 auto_umap/
