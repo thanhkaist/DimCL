@@ -10,6 +10,7 @@ checkpoint/
 *stochastic.py
 *load_checkpoint*
 test.sh
+test_*
 plot.ipynb
 *.pdf
 
