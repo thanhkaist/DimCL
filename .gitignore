@@ -10,6 +10,7 @@ checkpoint/
 *stochastic.py
 *load_checkpoint.py
 test.sh
+plot.ipynb
 
 # umap dir
 auto_umap/
