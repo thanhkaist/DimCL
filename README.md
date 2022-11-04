@@ -4,24 +4,16 @@ This source code is for the paper: ................
 
 This source code is build upon [solo-learn](https://github.com/vturrisi/solo-learn) library which is a library of self-supervised methods for unsupervised visual representation learning powered by PyTorch Lightning.
 
+## News
+
+
+
+
 ## Methods available:
-* [DimCL] (https://arxiv.org/abs/2103.03230)
-* [Barlow Twins](https://arxiv.org/abs/2103.03230)
-* [BYOL](https://arxiv.org/abs/2006.07733)
-* [DeepCluster V2](https://arxiv.org/abs/2006.09882)
-* [DINO](https://arxiv.org/abs/2104.14294)
-* [MoCo V2+](https://arxiv.org/abs/2003.04297)
-* [NNBYOL](https://arxiv.org/abs/2104.14548)
-* [NNCLR](https://arxiv.org/abs/2104.14548)
-* [NNSiam](https://arxiv.org/abs/2104.14548)
-* [ReSSL](https://arxiv.org/abs/2107.09282)
-* [SimCLR](https://arxiv.org/abs/2002.05709)
-* [SimSiam](https://arxiv.org/abs/2011.10566)
-* [Supervised Contrastive Learning](https://arxiv.org/abs/2004.11362)
-* [SwAV](https://arxiv.org/abs/2006.09882)
-* [VIbCReg](https://arxiv.org/abs/2109.00783)
-* [VICReg](https://arxiv.org/abs/2105.04906)
-* [W-MSE](https://arxiv.org/abs/2007.06346)
+| [DimCL](https://arxiv.org/abs/2103.03230) | [Barlow Twins](https://arxiv.org/abs/2103.03230) |[BYOL](https://arxiv.org/abs/2006.07733) |  [DeepCluster V2](https://arxiv.org/abs/2006.09882) |  [DINO](https://arxiv.org/abs/2104.14294) |
+| [MoCo V2+](https://arxiv.org/abs/2003.04297) | [NNBYOL](https://arxiv.org/abs/2104.14548) | [NNCLR](https://arxiv.org/abs/2104.14548) | [NNSiam](https://arxiv.org/abs/2104.14548) | [ReSSL](https://arxiv.org/abs/2107.09282) |
+| [SimCLR](https://arxiv.org/abs/2002.05709) | [SimSiam](https://arxiv.org/abs/2011.10566) | [Supervised Contrastive Learning](https://arxiv.org/abs/2004.11362) | [SwAV](https://arxiv.org/abs/2006.09882) | [VIbCReg](https://arxiv.org/abs/2109.00783) |
+| [VICReg](https://arxiv.org/abs/2105.04906) | [W-MSE](https://arxiv.org/abs/2007.06346) | | | |
 
 ---
 
