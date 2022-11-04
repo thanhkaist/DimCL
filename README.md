@@ -1,40 +1,11 @@
-<div align="center">
+# DCL 
 
-[![tests](https://github.com/vturrisi/solo-learn/actions/workflows/tests.yml/badge.svg)](https://github.com/vturrisi/solo-learn/actions/workflows/tests.yml)
-[![Documentation Status](https://readthedocs.org/projects/solo-learn/badge/?version=latest)](https://solo-learn.readthedocs.io/en/latest/?badge=latest)
-[![codecov](https://codecov.io/gh/vturrisi/solo-learn/branch/main/graph/badge.svg?token=WLU9UU17XZ)](https://codecov.io/gh/vturrisi/solo-learn)
+This source code is for the paper: ................ 
 
-</div>
-
-# solo-learn
-
-A library of self-supervised methods for unsupervised visual representation learning powered by PyTorch Lightning.
-We aim at providing SOTA self-supervised methods in a comparable environment while, at the same time, implementing training tricks.
-While the library is self-contained, it is possible to use the models outside of solo-learn.
-
----
-
-## News
-* **[Dec 05 2021]**: :notes: Separated [SupCon](https://arxiv.org/abs/2004.11362) from SimCLR and added runs.
-* **[Dec 01 2021]**: :fountain: Added [PoolFormer](https://arxiv.org/abs/2111.11418).
-* **[Nov 29 2021]**: :bangbang: Breaking changes! Update your versions!!!
-* **[Nov 29 2021]**: :book: New tutorials!
-* **[Nov 29 2021]**: :houses: Added offline K-NN and offline UMAP.
-* **[Nov 29 2021]**: :rotating_light: Updated PyTorch and PyTorch Lightning versions. 10% faster.
-* **[Nov 29 2021]**: :beers: Added code of conduct, contribution instructions, issue templates and UMAP tutorial.
-* **[Nov 23 2021]**: :space_invader: Added [VIbCReg](https://arxiv.org/abs/2109.00783).
-* **[Oct 21 2021]**: :triumph: Added support for object recognition via Detectron v2 and auto resume functionally that automatically tries to resume an experiment that crashed/reached a timeout.
-* **[Oct 10 2021]**: :japanese_ogre: Restructured augmentation pipelines to allow more flexibility and multicrop. Also added multicrop for BYOL.
-* **[Sep 27 2021]**: :pizza: Added [NNSiam](https://arxiv.org/abs/2104.14548), [NNBYOL](https://arxiv.org/abs/2104.14548), new tutorials for implementing new methods [1](https://solo-learn.readthedocs.io/en/latest/tutorials/add_new_method.html) and [2](https://solo-learn.readthedocs.io/en/latest/tutorials/add_new_method_momentum.html), more testing and fixed issues with custom data and linear evaluation.
-* **[Sep 19 2021]**: :kangaroo: Added online k-NN evaluation.
-* **[Sep 17 2021]**: :robot: Added [ViT](https://arxiv.org/abs/2010.11929) and [Swin](https://arxiv.org/abs/2103.14030).
-* **[Sep 13 2021]**: :book: Improved [Docs](https://solo-learn.readthedocs.io/en/latest/?badge=latest) and added tutorials for [pretraining](https://solo-learn.readthedocs.io/en/latest/tutorials/overview.html) and [offline linear eval](https://solo-learn.readthedocs.io/en/latest/tutorials/offline_linear_eval.html).
-* **[Aug 13 2021]**: :whale: [DeepCluster V2](https://arxiv.org/abs/2006.09882) is now available.
-
----
+This source code is build upon [solo-learn](https://github.com/vturrisi/solo-learn) library which is a library of self-supervised methods for unsupervised visual representation learning powered by PyTorch Lightning.
 
 ## Methods available:
-
+* [DimCL] (https://arxiv.org/abs/2103.03230)
 * [Barlow Twins](https://arxiv.org/abs/2103.03230)
 * [BYOL](https://arxiv.org/abs/2006.07733)
 * [DeepCluster V2](https://arxiv.org/abs/2006.09882)
@@ -109,7 +80,7 @@ While the library is self-contained, it is possible to use the models outside of
 
 First clone the repo.
 
-Then, to install solo-learn with Dali and/or UMAP support, use:
+Then, to install DCL with Dali and/or UMAP support, use:
 ```
 pip3 install .[dali,umap]
 ```
@@ -146,10 +117,6 @@ Please, check out our [documentation](https://solo-learn.readthedocs.io/en/lates
 * [Adding a new momentum method](https://github.com/vturrisi/solo-learn/blob/main/docs/source/tutorials/add_new_method_momentum.rst)
 * [Visualizing features with UMAP](https://github.com/vturrisi/solo-learn/blob/main/docs/source/tutorials/umap.rst)
 * [Offline k-NN](https://github.com/vturrisi/solo-learn/blob/main/docs/source/tutorials/knn.rst)
-
-If you want to contribute to solo-learn, make sure you take a look at [how to contribute](https://github.com/vturrisi/solo-learn/blob/main/.github/CONTRIBUTING.md) and follow the [code of conduct](https://github.com/vturrisi/solo-learn/blob/main/.github/CODE_OF_CONDUCT.md)
-
----
 
 ## Model Zoo
 
