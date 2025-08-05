@@ -1,112 +1,125 @@
-# DimCL 
+# DimCL: Dimensional Contrastive Learning for Improving Self-Supervised Learning
 
-This source code is for the paper: DimCL: Dimensional Contrastive Learning For Improving Self-Supervised Learning
+Official PyTorch implementation of  
+**[DimCL: Dimensional Contrastive Learning for Improving Self-Supervised Learning](https://arxiv.org/abs/2103.03230)**  
+IEEE Access, 2023
 
-Link: [DimCL](https://arxiv.org/abs/2103.03230)
-
-This source code is built upon [solo-learn](https://github.com/vturrisi/solo-learn) library which is a library of self-supervised methods for unsupervised visual representation learning powered by PyTorch Lightning.
-
-
-
-## Methods available:
-| [DimCL](https://arxiv.org/abs/2103.03230) | [Barlow Twins](https://arxiv.org/abs/2103.03230) |[BYOL](https://arxiv.org/abs/2006.07733) |  [DeepCluster V2](https://arxiv.org/abs/2006.09882) |  [DINO](https://arxiv.org/abs/2104.14294) |
-|--------|-------|---------------|---------------|--------------|
-| [MoCo V2+](https://arxiv.org/abs/2003.04297) | [NNBYOL](https://arxiv.org/abs/2104.14548) | [NNCLR](https://arxiv.org/abs/2104.14548) | [NNSiam](https://arxiv.org/abs/2104.14548) | [ReSSL](https://arxiv.org/abs/2107.09282) |
-| [SimCLR](https://arxiv.org/abs/2002.05709) | [SimSiam](https://arxiv.org/abs/2011.10566) | [Supervised Contrastive Learning](https://arxiv.org/abs/2004.11362) | [SwAV](https://arxiv.org/abs/2006.09882) | [VIbCReg](https://arxiv.org/abs/2109.00783) |
-| [VICReg](https://arxiv.org/abs/2105.04906) | [W-MSE](https://arxiv.org/abs/2007.06346) | | | |
+> 📚 Built upon [solo-learn](https://github.com/vturrisi/solo-learn): A library of self-supervised learning methods powered by PyTorch Lightning.
 
 ---
 
-## Extra flavor
+## 🧠 Overview
 
-# Multiple backbones
-* [ResNet](https://arxiv.org/abs/1512.03385)
-* [ViT](https://arxiv.org/abs/2010.11929)
-* [Swin](https://arxiv.org/abs/2103.14030)
-* [PoolFormer](https://arxiv.org/abs/2111.11418)
+**DimCL** introduces a novel regularization strategy that applies contrastive learning **across embedding dimensions**, rather than across instances. This dimensional contrastive loss improves feature decorrelation and representation diversity, enhancing performance across self-supervised learning (SSL) methods.
 
-### Data
-* Increased data processing speed by up to 100% using [Nvidia Dali](https://github.com/NVIDIA/DALI).
-* Flexible augmentations.
-
-### Evaluation and logging
-* Online linear evaluation via stop-gradient for easier debugging and prototyping (optionally available for the momentum backbone as well).
-* Online and offlfine K-NN evaluation.
-* Normal offline linear evaluation.
-* All the perks of PyTorch Lightning (mixed precision, gradient accumulation, clipping, automatic logging and much more).
-* Easy-to-extend modular code structure.
-* Custom model logging with a simpler file organization.
-* Automatic feature space visualization with UMAP.
-* Offline UMAP.
-* Common metrics and more to come...
-
-### Training tricks
-* Multi-cropping dataloading following [SwAV](https://arxiv.org/abs/2006.09882):
-    * **Note**: currently, only SimCLR supports this.
-* Exclude batchnorm and biases from LARS.
-* No LR scheduler for the projection head in SimSiam.
----
-## Requirements
-
-* torch
-* torchvision
-* tqdm
-* einops
-* wandb
-* pytorch-lightning
-* lightning-bolts
-* torchmetrics
-* scipy
-* timm
-
-**Optional**:
-* nvidia-dali
-* matplotlib
-* seaborn
-* pandas
-* umap-learn
+This repository provides:
+- A modular and extensible PyTorch implementation.
+- Integration with multiple popular SSL methods and backbone architectures.
+- Evaluation tools and logging using PyTorch Lightning.
 
 ---
 
-## Installation
 
-First clone the repo.
+## ✅ Supported Methods
 
-Then, to install DCL with Dali and/or UMAP support, use:
-```
-pip3 install .[dali,umap]
-```
-
-If no Dali/UMAP support is needed, the repository can be installed as:
-```
-pip3 install .
-```
-
-**NOTE:** if you are having trouble with dali, install it with `pip install --extra-index-url https://developer.download.nvidia.com/compute/redist --upgrade nvidia-dali-cuda110` or with your specific cuda version.
-
-**NOTE 2:** If you want to modify the library, install it in dev mode with `-e`.
-
-**NOTE 3:** Soon to be on pip.
+| Method | Paper Link |
+|--------|------------|
+| DimCL (Ours) | [arXiv:2103.03230](https://arxiv.org/abs/2103.03230) |
+| Barlow Twins | [arXiv:2103.03230](https://arxiv.org/abs/2103.03230) |
+| BYOL | [arXiv:2006.07733](https://arxiv.org/abs/2006.07733) |
+| DeepCluster V2 | [arXiv:2006.09882](https://arxiv.org/abs/2006.09882) |
+| DINO | [arXiv:2104.14294](https://arxiv.org/abs/2104.14294) |
+| MoCo V2+ | [arXiv:2003.04297](https://arxiv.org/abs/2003.04297) |
+| NNBYOL / NNCLR / NNSiam | [arXiv:2104.14548](https://arxiv.org/abs/2104.14548) |
+| ReSSL | [arXiv:2107.09282](https://arxiv.org/abs/2107.09282) |
+| SimCLR | [arXiv:2002.05709](https://arxiv.org/abs/2002.05709) |
+| SimSiam | [arXiv:2011.10566](https://arxiv.org/abs/2011.10566) |
+| SupCon | [arXiv:2004.11362](https://arxiv.org/abs/2004.11362) |
+| SwAV | [arXiv:2006.09882](https://arxiv.org/abs/2006.09882) |
+| VICReg / VIbCReg | [VICReg](https://arxiv.org/abs/2105.04906), [VIbCReg](https://arxiv.org/abs/2109.00783) |
+| W-MSE | [arXiv:2007.06346](https://arxiv.org/abs/2007.06346) |
 
 ---
 
-## Training
+## 🧩 Supported Backbones
 
-For pretraining the backbone, follow one of the many bash files in `bash_files/pretrain/`.
+- [ResNet](https://arxiv.org/abs/1512.03385)
+- [Vision Transformer (ViT)](https://arxiv.org/abs/2010.11929)
+- [Swin Transformer](https://arxiv.org/abs/2103.14030)
+- [PoolFormer](https://arxiv.org/abs/2111.11418)
 
-After that, for offline linear evaluation, follow the examples on `bash_files/linear`.
+---
 
-**NOTE:** Files try to be up-to-date and follow as closely as possible the recommended parameters of each paper, but check them before running.
+## 📦 Key Features
+### 🔁 Data & Augmentation
+- Fast data loading with [NVIDIA DALI](https://github.com/NVIDIA/DALI) (up to 2× faster).
+- Configurable and flexible data augmentations.
 
-DimCL is a regularizer that can be enabled to provide free performance gain.  In each bash file, adjust DimCL hyper-parameters to incorporate/fine-grained tune.
+### 🧪 Evaluation & Logging
+- Online/offline linear and K-NN evaluation.
+- Feature visualization with UMAP (online & offline).
+- Built-in support for PyTorch Lightning features:
+  - Mixed precision
+  - Gradient accumulation & clipping
+  - Automatic logging
+- Lightweight modular code for easy prototyping.
 
+### 🛠 Training Utilities
+- Multi-crop support (e.g., SwAV-style, currently SimCLR only).
+- LARS optimizer improvements (e.g., excluding BatchNorm/bias).
+- Optional LR scheduling tweaks for SimSiam.
+
+---
+
+## 🧰 Requirements
+
+```bash
+pip install torch torchvision pytorch-lightning lightning-bolts wandb einops tqdm torchmetrics timm scipy
 ```
-    --lam 0.1 \ # temperature weight
-    --tau_decor 0.1 \ # hardness aware ratio
-    --our_loss False \ # enable/disable DimCl
+Optional:
+
+```bash
+pip install nvidia-dali matplotlib seaborn pandas umap-learn
 ```
+## 🚀 Installation
+Clone the repo and install dependencies:
 
+```bash
+git clone https://github.com/your-username/dimcl.git
+cd dimcl
 
+# Full installation with DALI and UMAP
+pip install .[dali,umap]
+
+# Or basic installation
+pip install .
+```
+💡 Trouble with DALI? Try:
+
+```bash
+pip install --extra-index-url https://developer.download.nvidia.com/compute/redist --upgrade nvidia-dali-cuda110
+```
+Replace cuda110 with your specific CUDA version.
+
+## 🏋️‍♂️ Training
+Pretrain the backbone using one of the scripts in:
+
+```bash
+bash_files/pretrain/
+```
+Then run offline linear evaluation:
+
+```bash
+bash_files/linear/
+```
+To enable DimCL, set the following flags in your bash config:
+
+```bash
+--our_loss True \        # Enable DimCL
+--lam 0.1 \              # DimCL weight
+--tau_decor 0.1 \        # Hardness-aware contrast ratio
+```
+> 📝 Most bash files follow the recommended hyperparameters from the original papers—check and tune as needed.
 
 ## Citation
 If you use this, please cite [DimCL](https://arxiv.org/abs/2103.03230):
