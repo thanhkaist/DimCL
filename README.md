@@ -1,7 +1,7 @@
 # DimCL: Dimensional Contrastive Learning for Improving Self-Supervised Learning
 
 Official PyTorch implementation of  
-**[DimCL: Dimensional Contrastive Learning for Improving Self-Supervised Learning](https://arxiv.org/abs/2103.03230)**  
+**[DimCL: Dimensional Contrastive Learning for Improving Self-Supervised Learning](https://arxiv.org/abs/2309.11782)**  
 IEEE Access, 2023
 
 > 📚 Built upon [solo-learn](https://github.com/vturrisi/solo-learn): A library of self-supervised learning methods powered by PyTorch Lightning.
@@ -24,20 +24,20 @@ This repository provides:
 
 | Method | Paper Link |
 |--------|------------|
-| DimCL (Ours) | [arXiv:2103.03230](https://arxiv.org/abs/2103.03230) |
-| Barlow Twins | [arXiv:2103.03230](https://arxiv.org/abs/2103.03230) |
-| BYOL | [arXiv:2006.07733](https://arxiv.org/abs/2006.07733) |
-| DeepCluster V2 | [arXiv:2006.09882](https://arxiv.org/abs/2006.09882) |
-| DINO | [arXiv:2104.14294](https://arxiv.org/abs/2104.14294) |
-| MoCo V2+ | [arXiv:2003.04297](https://arxiv.org/abs/2003.04297) |
-| NNBYOL / NNCLR / NNSiam | [arXiv:2104.14548](https://arxiv.org/abs/2104.14548) |
-| ReSSL | [arXiv:2107.09282](https://arxiv.org/abs/2107.09282) |
-| SimCLR | [arXiv:2002.05709](https://arxiv.org/abs/2002.05709) |
-| SimSiam | [arXiv:2011.10566](https://arxiv.org/abs/2011.10566) |
-| SupCon | [arXiv:2004.11362](https://arxiv.org/abs/2004.11362) |
-| SwAV | [arXiv:2006.09882](https://arxiv.org/abs/2006.09882) |
+| DimCL (Ours) | [arXiv](https://arxiv.org/abs/2309.11782) |
+| Barlow Twins | [arXiv](https://arxiv.org/abs/2103.03230) |
+| BYOL | [arXiv](https://arxiv.org/abs/2006.07733) |
+| DeepCluster V2 | [arXiv](https://arxiv.org/abs/2006.09882) |
+| DINO | [arXiv](https://arxiv.org/abs/2104.14294) |
+| MoCo V2+ | [arXiv](https://arxiv.org/abs/2003.04297) |
+| NNBYOL / NNCLR / NNSiam | [arXiv](https://arxiv.org/abs/2104.14548) |
+| ReSSL | [arXiv](https://arxiv.org/abs/2107.09282) |
+| SimCLR | [arXiv](https://arxiv.org/abs/2002.05709) |
+| SimSiam | [arXiv](https://arxiv.org/abs/2011.10566) |
+| SupCon | [arXiv](https://arxiv.org/abs/2004.11362) |
+| SwAV | [arXiv](https://arxiv.org/abs/2006.09882) |
 | VICReg / VIbCReg | [VICReg](https://arxiv.org/abs/2105.04906), [VIbCReg](https://arxiv.org/abs/2109.00783) |
-| W-MSE | [arXiv:2007.06346](https://arxiv.org/abs/2007.06346) |
+| W-MSE | [arXiv](https://arxiv.org/abs/2007.06346) |
 
 ---
 
